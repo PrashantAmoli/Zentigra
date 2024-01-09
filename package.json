@@ -14,6 +14,9 @@
     "build:next": "next build"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^4.30.3",
+    "@clerk/nextjs": "^4.29.2",
+    "@supabase/supabase-js": "^2.39.2",
     "next": "14.0.2",
     "plasmo": "0.84.0",
     "react": "18.2.0",

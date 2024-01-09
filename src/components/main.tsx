@@ -4,16 +4,13 @@ export function Main({ name = "Extension" }) {
   const [data, setData] = useState("")
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: 16
-      }}>
-      <h1>
+    <div>
+      <h1
+      className="text-center">
         Welcome to your <a href="https://www.plasmo.com">Plasmo</a> {name}!
       </h1>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
+      
+      <input onChange={(e) => setData(e.target.value)} value={data} className="border-1 border rounded shadow" />
 
       <a href="https://docs.plasmo.com">READ THE DOCS!</a>
     </div>
