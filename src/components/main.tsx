@@ -1,18 +1,20 @@
+import { useUser } from "@clerk/clerk-react"
 import { useState } from "react"
 
+type UserData = {
+  emailAddresses: unknown[]
+  isSignedIn: boolean
+  isLoaded: boolean
+}
+
 export function Main({ name = "Extension" }) {
-  const [data, setData] = useState("")
+  const userData = useUser()
 
   return (
-    <div>
-      <h1
-      className="text-center">
-        Welcome to your <a href="https://www.plasmo.com">Plasmo</a> {name}!
+    <div className="w-full h-80 flex justify-center items-center">
+      <h1 className="text-center text-5xl font-bold">
+        Welcome to your Zentigra {userData.user?.firstName}!
       </h1>
-      
-      <input onChange={(e) => setData(e.target.value)} value={data} className="border-1 border rounded shadow" />
-
-      <a href="https://docs.plasmo.com">READ THE DOCS!</a>
     </div>
   )
 }
