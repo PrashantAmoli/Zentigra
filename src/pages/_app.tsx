@@ -1,12 +1,20 @@
-// import { Toaster } from "sonner";
-import "~styles/globals.css";
+import { Toaster } from "sonner"
+
+import ClerkWrapper from "~components/ClerkWrapper"
+import { Navbar } from "~components/Navbar"
+
+import "~styles/globals.css"
 
 export default function App({ Component, pageProps }) {
   return (
     <>
-    <Component {...pageProps} />
-    
-    {/* <Toaster position="bottom-center" /> */}
+      <ClerkWrapper>
+        <Navbar />
+
+        <Component {...pageProps} />
+      </ClerkWrapper>
+
+      <Toaster position="bottom-center" />
     </>
   )
 }
