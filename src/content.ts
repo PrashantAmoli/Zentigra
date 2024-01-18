@@ -4,8 +4,6 @@ export {}
 import html2canvas from "html2canvas";
 
 
-const storage = new Storage()
-
 var currentState = 'stop';
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -15,6 +13,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     if(currentState == 'stop'){
         //send the data to the backend
+        chrome.runtime.sendMessage({ action: "contentScriptToPopup", data: "stop" });
+
 
         //TEMPORARY 
         chrome.storage.local.get(["image"]).then((result) => {
