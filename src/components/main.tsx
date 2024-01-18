@@ -15,10 +15,20 @@ export function Main({ name = "Extension" }) {
 
   const changeState = (newState) =>{
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      console.log('inside the tab function')
       const activeTabId = tabs[0].id;
       chrome.tabs.sendMessage(activeTabId, { action: newState });
     });
   }
+
+
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.action === "backgroundToPopup") {
+      console.log("Message from background script:", message.data);
+  
+      // Do the DB call here
+    }
+  });
 
 
   return (
