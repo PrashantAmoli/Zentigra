@@ -1,7 +1,7 @@
 import { Toaster } from "sonner"
 
-import ClerkWrapper from "~components/ClerkWrapper"
 import { Navbar } from "~components/Navbar"
+import ClerkWrapper from "~components/wrappers/ClerkWrapper"
 
 import "~styles/globals.css"
 

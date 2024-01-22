@@ -14,6 +14,7 @@
     "build:next": "next build"
   },
   "dependencies": {
+    "@clerk/chrome-extension": "^0.6.6",
     "@clerk/clerk-react": "^4.30.3",
     "@clerk/nextjs": "^4.29.2",
     "@radix-ui/react-dialog": "^1.0.5",
