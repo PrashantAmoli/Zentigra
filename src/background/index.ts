@@ -24,9 +24,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         action: "backgroundToPopup",
         data: message.data,
         command: message.command
-      }),
-        5000
-    })
+      })
+    }, 4000)
   }
 })
 

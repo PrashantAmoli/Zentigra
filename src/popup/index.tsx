@@ -12,7 +12,7 @@ function IndexPopup() {
       {/* <ClerkProvider
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}> */}
       {/* <ClerkWrapper> */}
-      <main className="min-w-96 h-96 flex justify-center items-center">
+      <main className="min-w-96 h-96 flex justify-center items-center w-full overflow-x-hidden">
         <Main />
       </main>
 
