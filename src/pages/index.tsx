@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { Main } from "~components/views/main"
+import Sequences from "~components/views/Sequences"
 import Welcome from "~components/views/Welcome"
 import { supabase } from "~supabase"
 
@@ -32,11 +32,11 @@ function IndexPage() {
 
   return (
     <>
-      <Welcome />
+      <main className="w-full overflow-x-hidden">
+        <Welcome />
 
-      <Main name="App" />
-
-      <pre>{JSON.stringify(users, null, 2)}</pre>
+        <Sequences />
+      </main>
     </>
   )
 }

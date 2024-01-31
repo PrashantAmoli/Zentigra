@@ -1,30 +1,14 @@
 import "~styles/globals.css"
 
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/chrome-extension"
-
 import { Main } from "~components/views/main"
-import Welcome from "~components/views/Welcome"
-import ClerkWrapper from "~components/wrappers/ClerkWrapper"
+import Sequences from "~components/views/Sequences"
 
 function IndexPopup() {
   return (
     <>
-      {/* <ClerkProvider
-        publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}> */}
-      {/* <ClerkWrapper> */}
-      <main className="min-w-96 h-96 flex justify-center items-center w-full overflow-x-hidden">
+      <main className="flex items-center justify-center w-full overflow-x-hidden min-w-96 h-96">
         <Main />
       </main>
-
-      {/* <SignedIn>
-        <span className="fixed bottom-0 right-1/3">SignedIn</span>
-      </SignedIn>
-
-      <SignedOut>
-        <span className="fixed bottom-0 right-1/3">SignedOut</span>
-      </SignedOut> */}
-      {/* </ClerkWrapper> */}
-      {/* </ClerkProvider> */}
     </>
   )
 }
