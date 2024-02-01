@@ -1,4 +1,5 @@
-import html2canvas from "html2canvas"
+import * as htmlToImage from 'html-to-image';
+
 
 export {}
 
@@ -25,7 +26,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       console.log("inside the render image")
       for (let image of images) {
         console.log("inside the loop")
-        renderImage(image)
+        // renderImage(image)
 
         sequenceData.push(image)
       }
@@ -63,13 +64,10 @@ document.addEventListener("mousedown", function (event) {
 
   const screenshotTarget = document.body
 
-  html2canvas(screenshotTarget, {
-    x: window.scrollX,
-    y: window.scrollY,
-    width: window.innerWidth,
-    height: window.innerHeight
-  }).then(async (canvas) => {
-    console.log("screenshot taken")
+  htmlToImage.toCanvas(screenshotTarget)
+  .then(function (canvas) {
+    // document.body.appendChild(canvas);
+
     const base64image = canvas.toDataURL("image/png")
     console.log("this is the image: ", base64image)
 
@@ -91,5 +89,6 @@ document.addEventListener("mousedown", function (event) {
         console.log("Value is set")
       })
     })
-  })
+  });
+
 })
