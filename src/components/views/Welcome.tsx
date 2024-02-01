@@ -11,8 +11,8 @@ export const Welcome = () => {
 
   return (
     <>
-      <div className="w-full h-80 flex justify-center items-center">
-        <h1 className="text-center text-5xl font-bold">
+      <div className="flex items-center justify-center w-full h-80">
+        <h1 className="text-5xl font-bold text-center">
           Welcome to your Zentigra {userData?.user?.firstName}!
         </h1>
       </div>
