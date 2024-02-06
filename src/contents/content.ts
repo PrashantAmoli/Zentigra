@@ -1,5 +1,5 @@
-import * as htmlToImage from 'html-to-image';
-
+import * as htmlScreenCaptureJs from "html-screen-capture-js"
+import * as htmlToImage from "html-to-image"
 
 export {}
 
@@ -30,6 +30,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
         sequenceData.push(image)
       }
+      console.info("sequenceData: ", sequenceData)
 
       //send the data to the backend
       chrome.runtime.sendMessage({
@@ -55,8 +56,21 @@ const renderImage = (src) => {
   document.body.appendChild(imgElement)
 }
 
+const captureScreen = () => {
+  const ss = htmlScreenCaptureJs.capture(
+    htmlScreenCaptureJs.OutputType.STRING,
+    document
+  )
+
+  console.log("ss: ", `data:text/html;charset=utf-8,${encodeURI(`${ss}`)}`)
+}
+
 document.addEventListener("mousedown", function (event) {
+  const x = event.clientX
+  const y = event.clientY
   console.log("Mouse clicked at:", { x: event.clientX, y: event.clientY })
+
+  // captureScreen()
 
   if (currentState !== "start") {
     return
@@ -64,31 +78,36 @@ document.addEventListener("mousedown", function (event) {
 
   const screenshotTarget = document.body
 
-  htmlToImage.toCanvas(screenshotTarget)
-  .then(function (canvas) {
-    // document.body.appendChild(canvas);
+  htmlToImage
+    .toCanvas(screenshotTarget, {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      canvasWidth: window.innerWidth,
+      canvasHeight: window.innerHeight
+    })
+    .then(function (canvas) {
+      // document.body.appendChild(canvas);
 
-    const base64image = canvas.toDataURL("image/png")
-    console.log("this is the image: ", base64image)
+      const base64image = canvas.toDataURL("image/png")
+      console.log("this is the image: ", base64image)
 
-    chrome.storage.local.get(["image"]).then((result) => {
-      console.log("Value currently is " + result["image"])
-      let imageString = result["image"]
+      chrome.storage.local.get(["image"]).then((result) => {
+        console.log("Value currently is " + result["image"])
+        let imageString = result["image"]
 
-      console.log("this is the imageString: ", imageString)
-      if (imageString == null) {
-        imageString = "[]"
-      }
-      let imageArray = JSON.parse(imageString)
-      console.log("imageArray: ", imageArray)
-      imageArray.push(base64image)
-      imageString = JSON.stringify(imageArray)
-      console.log("imageArrary after: ", imageArray.length)
+        console.log("this is the imageString: ", imageString)
+        if (imageString == null) {
+          imageString = "[]"
+        }
+        let imageArray = JSON.parse(imageString)
+        console.log("imageArray: ", imageArray)
+        imageArray.push({ url: base64image, x, y })
+        imageString = JSON.stringify(imageArray)
+        console.log("imageArrary after: ", imageArray.length)
 
-      chrome.storage.local.set({ image: imageString }).then(() => {
-        console.log("Value is set")
+        chrome.storage.local.set({ image: imageString }).then(() => {
+          console.log("Value is set")
+        })
       })
     })
-  });
-
 })
