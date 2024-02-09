@@ -21,7 +21,7 @@ export const Sequences = () => {
 
     if (sequencesError) console.log(sequencesError)
 
-    setSequences(sequencesData)
+    setSequences(sequencesData.reverse())
   }
 
   useEffect(() => {

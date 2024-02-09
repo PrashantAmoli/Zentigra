@@ -53,6 +53,7 @@
   },
   "manifest": {
     "host_permissions": [
+      "http://*/*",
       "https://*/*"
     ],
     "permissions": [
@@ -61,7 +62,8 @@
       "scripting",
       "storage",
       "nativeMessaging",
-      "unlimitedStorage"
+      "unlimitedStorage",
+      "sidePanel"
     ]
   }
 }

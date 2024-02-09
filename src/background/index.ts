@@ -12,20 +12,47 @@ const openPopup = () => {
   })
 }
 
+const openPreviewPage = () => {
+  chrome.tabs.create({
+    url: "http://localhost:1947/preview"
+  })
+}
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "contentScriptToPopup") {
-    openPopup()
+    // openPopup()
+    openPreviewPage()
+
     // Log the message received from the content script
     console.log("Message from content script:", message.command, message.data)
 
     // Send the message to the popup
     setTimeout(() => {
-      chrome.runtime.sendMessage({
-        action: "backgroundToPopup",
-        data: message.data,
-        command: message.command
-      })
-    }, 4000)
+      // chrome.runtime.sendMessage({
+      //   action: "backgroundToPopup",
+      //   data: message.data,
+      //   command: message.command
+      // })
+
+      chrome.tabs.query(
+        {
+          url: "http://localhost:1947/preview",
+          currentWindow: true
+          // active: true
+        },
+        (tabDetails) => {
+          console.log("Preview Tabs: ", tabDetails)
+          //sends messages to all active tabs for now
+          tabDetails.forEach((tab) => {
+            chrome.tabs.sendMessage(tab.id, {
+              action: "backgroundToPreview",
+              command: "all-tabs",
+              data: message.data
+            })
+          })
+        }
+      )
+    }, 7000)
   }
 })
 
