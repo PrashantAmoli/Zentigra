@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // import { toast } from "sonner"
 
 import { Button } from "~/components/ui/button"
 import { Input } from "~components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~components/ui/tabs"
+import { Textarea } from "~components/ui/textarea"
 
 type SequencePreviewType = {
   url: string
@@ -22,11 +23,31 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 // popup
 export function Main({ name = "Extension" }) {
   const [sequenceName, setSequenceName] = useState<string>("")
+  const [sequenceDescription, setSequenceDescription] = useState<string>("")
+  const [sequenceCreatedBy, setSequenceCreatedBy] = useState<string>("")
+  const [disableUpload, setDisableUpload] = useState<boolean>(true)
+  const [message, setMessage] = useState<string>("")
+
   const [sequencePreview, setSequencePreview] = useState<SequencePreviewType[]>(
     []
   )
   const [sequence, setSequence] = useState<any>(null)
   const [steps, setSteps] = useState<any>(null)
+
+  useEffect(() => {
+    if (
+      sequencePreview.length > 0 &&
+      sequenceName.length > 3 &&
+      sequenceDescription.length > 3 &&
+      sequenceCreatedBy.length > 5 &&
+      sequenceCreatedBy.includes("@") &&
+      sequenceCreatedBy.includes(".")
+    ) {
+      setDisableUpload(false)
+    } else {
+      setDisableUpload(true)
+    }
+  }, [sequencePreview, sequenceName, sequenceDescription, sequenceCreatedBy])
 
   chrome.runtime?.onMessage?.addListener(
     function (message, sender, sendResponse) {
@@ -57,8 +78,8 @@ export function Main({ name = "Extension" }) {
       .insert({
         name:
           sequenceName || "test sequence " + Math.floor(Math.random() * 100),
-        description: "some description",
-        created_by: "prashantamoli2621@gmail.com"
+        description: sequenceDescription || "some description",
+        created_by: sequenceCreatedBy || "prashantamoli2621@gmail.com"
       })
       .select()
 
@@ -99,6 +120,7 @@ export function Main({ name = "Extension" }) {
 
     console.log("steps", stepsData)
     setSteps(stepsData)
+    setMessage("Steps uploaded successfully")
 
     // toast.success("Steps uploaded successfully")
   }
@@ -117,15 +139,15 @@ export function Main({ name = "Extension" }) {
         <Button onClick={() => changeState("start")}>Start</Button>
         <Button onClick={() => changeState("stop")}>Stop</Button>
 
-        <pre className="w-full break-words">
+        {/* <pre className="w-full break-words">
           {JSON.stringify(sequencePreview)}
-        </pre>
-        <pre className="w-full break-words">{JSON.stringify(sequence)}</pre>
-        <pre className="w-full break-words">{JSON.stringify(steps)}</pre>
+        </pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(sequence)}</pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(steps)}</pre> */}
 
         {sequencePreview.length === 0 ? null : (
           <>
-            <div className="absolute inset-x-0 top-0 bottom-0 z-30 flex flex-col items-center justify-center w-full h-screen gap-8 p-2 pt-24 mx-auto overflow-x-hidden overflow-y-scroll backdrop-blur">
+            <div className="absolute inset-x-0 top-0 bottom-0 z-30 flex flex-col items-center justify-center w-full min-h-screen gap-8 p-2 pt-24 mx-auto overflow-x-hidden overflow-y-scroll backdrop-blur">
               <Tabs defaultValue="options" className="w-full min-h-screen">
                 <TabsList className="">
                   <TabsTrigger value="options">Options</TabsTrigger>
@@ -133,23 +155,47 @@ export function Main({ name = "Extension" }) {
                 </TabsList>
 
                 <TabsContent value="options">
-                  <div className="flex flex-col items-center w-full max-w-3xl gap-5 mx-auto">
+                  <div className="flex flex-col items-center justify-center w-full max-w-3xl gap-5 pt-32 mx-auto">
                     <h2 className="absolute top-0 z-40 w-full p-2 text-2xl font-semibold">
                       Sequence Options
                     </h2>
 
+                    {/* <div className="flex flex-col w-full gap-5 mx-auto"> */}
                     <Input
                       value={sequenceName}
                       onChange={(e) => setSequenceName(e.target.value)}
                       placeholder="Enter sequence name"
                       className="max-w-sm py-2"
                     />
-                    <Button
-                      onClick={() => uploadSequence(sequencePreview)}
-                      disabled={sequencePreview?.length ? false : true}
-                      className="mx-auto mb-10">
-                      Upload Sequence
-                    </Button>
+                    <Textarea
+                      value={sequenceDescription}
+                      onChange={(e) => setSequenceDescription(e.target.value)}
+                      placeholder="Enter some description"
+                      className="max-w-sm py-2"
+                    />
+                    <Input
+                      value={sequenceCreatedBy}
+                      onChange={(e) => setSequenceCreatedBy(e.target.value)}
+                      placeholder="Enter your email"
+                      className="max-w-sm py-2"
+                      type="email"
+                    />
+
+                    <div className="w-full p-2 text-center">
+                      {message.length > 0 ? (
+                        <div className="p-2 mx-auto font-semibold text-green-600 bg-green-100 md:px-9 w-fit rounded-xl">
+                          {message}
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => uploadSequence(sequencePreview)}
+                          disabled={disableUpload}
+                          className="mx-auto mb-10">
+                          Upload Sequence
+                        </Button>
+                      )}
+                    </div>
+                    {/* </div> */}
                   </div>
                 </TabsContent>
 

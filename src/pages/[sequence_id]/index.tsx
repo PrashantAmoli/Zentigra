@@ -1,7 +1,9 @@
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
+import { Button } from "~components/ui/button"
 import { supabase } from "~supabase"
 
 export const StepsPage = () => {
@@ -23,13 +25,47 @@ export const StepsPage = () => {
     return stepsData
   }
 
+  const deleteSequence = async () => {
+    const confirmDeletion = window.confirm(
+      "Are you sure you want to delete this sequence?"
+    )
+    if (!confirmDeletion) return
+
+    // delete all steps from sequence
+    const { error: stepsError } = await supabase
+      .from("steps")
+      .delete()
+      .eq("sequence_id", sequence_id)
+
+    if (stepsError) console.log(stepsError)
+    else toast.success("Steps deleted")
+
+    const { error } = await supabase
+      .from("sequences")
+      .delete()
+      .eq("id", sequence_id)
+
+    if (error) console.log(error)
+    else toast.success("Sequence deleted")
+
+    setTimeout(() => router.push("/"), 3000)
+  }
+
   useEffect(() => {
     fetchStepsFromSequenceId()
   }, [sequence_id])
 
   return (
     <>
-      <h1 className="py-4 text-2xl font-bold text-center">Steps</h1>
+      <div className="flex items-center justify-between w-full p-2 md:px-5">
+        <h1 className="py-4 text-2xl font-bold text-center">Steps</h1>
+
+        <div className="flex">
+          <Button onClick={() => deleteSequence()} variant="destructive">
+            Delete Sequence
+          </Button>
+        </div>
+      </div>
 
       <div className="flex flex-col w-full gap-5 p-5">
         {steps &&
