@@ -131,6 +131,11 @@ export function Main({ name = "Extension" }) {
       const activeTabId = tabs[0].id
       chrome.tabs.sendMessage(activeTabId, { action: newState })
     })
+
+    // close the popup
+    setTimeout(() => {
+      window.close()
+    }, 4000)
   }
 
   return (
