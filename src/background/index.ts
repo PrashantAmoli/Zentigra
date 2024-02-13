@@ -1,6 +1,7 @@
 export {}
 
-const frontendUrl = process.env.PLASMO_PUBLIC_FRONTEND_URL
+const frontendUrl =
+  process.env.PLASMO_PUBLIC_FRONTEND_URL || "https://localhost:1947"
 
 console.log(
   "Live now; make now always the most precious time. Now will never come again."
@@ -38,26 +39,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // })
 
       // Send the message to the preview page
-      chrome.tabs.query(
-        {
-          url: frontendUrl
-            ? `${frontendUrl}/preview`
-            : "http://localhost:1947/preview",
-          currentWindow: true
-          // active: true
-        },
-        (tabDetails) => {
-          console.log("Preview Tabs: ", tabDetails)
-          //sends messages to all active tabs for now
-          tabDetails.forEach((tab) => {
-            chrome.tabs.sendMessage(tab.id, {
-              action: "backgroundToPreview",
-              command: "all-tabs",
-              data: message.data
-            })
-          })
-        }
-      )
+      // chrome.tabs.query(
+      //   {
+      //     url: frontendUrl
+      //       ? `${frontendUrl}/preview`
+      //       : "http://localhost:1947/preview",
+      //     currentWindow: true
+      //     // active: true
+      //   },
+      //   (tabDetails) => {
+      //     console.log("Preview Tabs: ", tabDetails)
+      //     //sends messages to all active tabs for now
+      //     tabDetails.forEach((tab) => {
+      //       chrome.tabs.sendMessage(tab.id, {
+      //         action: "backgroundToPreview",
+      //         command: "all-tabs",
+      //         data: message.data
+      //       })
+      //     })
+      //   }
+      // )
 
       window.postMessage(
         {

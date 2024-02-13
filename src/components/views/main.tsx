@@ -118,8 +118,10 @@ export function Main({ name = "Extension" }) {
   return (
     <>
       <div className="flex flex-col items-center justify-center w-full gap-1 p-2">
-        <Button onClick={() => changeState("start")}>Start</Button>
-        <Button onClick={() => changeState("stop")}>Stop</Button>
+        <div className="flex w-full justify-evenly">
+          <Button onClick={() => changeState("start")}>Start</Button>
+          <Button onClick={() => changeState("stop")}>Stop</Button>
+        </div>
 
         {/* <pre className="w-full break-words">
           {JSON.stringify(sequencePreview)}

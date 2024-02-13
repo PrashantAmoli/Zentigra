@@ -33,6 +33,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       console.info("sequenceData: ", sequenceData)
 
       //send the data to the backend
+
+      // open the preview page in a new tab
+      chrome.tabs.create({
+        url: "http://localhost:1947/preview"
+      })
+
+      setTimeout(() => {
+        window.postMessage(
+          {
+            action: "contentScriptToPreview",
+            command: "stop",
+            data: { ...sequenceData }
+          },
+          "*"
+        )
+      }, 7000)
+
       chrome.runtime.sendMessage({
         action: "contentScriptToPopup",
         command: "stop",
