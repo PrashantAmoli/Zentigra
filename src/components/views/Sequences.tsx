@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
+import { Button } from "~components/ui/button"
 import {
   Card,
   CardContent,
@@ -24,6 +26,30 @@ export const Sequences = () => {
     setSequences(sequencesData.reverse())
   }
 
+  const deleteSequence = async (sequence_id) => {
+    const confirmDeletion = window.confirm(
+      "Are you sure you want to delete this sequence?"
+    )
+    if (!confirmDeletion) return
+
+    // delete all steps from sequence
+    const { error: stepsError } = await supabase
+      .from("steps")
+      .delete()
+      .eq("sequence_id", sequence_id)
+
+    if (stepsError) console.log(stepsError)
+    else toast.success("Steps deleted")
+
+    const { error } = await supabase
+      .from("sequences")
+      .delete()
+      .eq("id", sequence_id)
+
+    if (error) console.log(error)
+    else toast.success("Sequence deleted")
+  }
+
   useEffect(() => {
     fetchAllSequences()
   }, [])
@@ -34,22 +60,31 @@ export const Sequences = () => {
         {sequences &&
           sequences.map((sequence: any, key) => {
             return (
-              <Link href={`/${sequence.id}`} key={key}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{sequence.name}</CardTitle>
-                    <CardDescription>{sequence.description}</CardDescription>
-                  </CardHeader>
+              <Card key={key}>
+                <CardHeader>
+                  <CardTitle>{sequence.name}</CardTitle>
+                  <CardDescription>{sequence.description}</CardDescription>
+                </CardHeader>
 
-                  <CardContent>
-                    <p>Content</p>
-                  </CardContent>
+                <CardContent>
+                  <p className="text-xs">Sequence Id: {sequence.id}</p>
+                </CardContent>
 
-                  <CardFooter className="text-xs">
-                    Sequence Id: {sequence.id}
-                  </CardFooter>
-                </Card>
-              </Link>
+                <CardFooter className="flex justify-end gap-3">
+                  <Link href={`/${sequence.id}`}>
+                    <Button size="xs" variant="outline">
+                      View
+                    </Button>
+                  </Link>
+
+                  <Button
+                    size="xs"
+                    onClick={() => deleteSequence(sequence.id)}
+                    variant="destructive">
+                    Delete
+                  </Button>
+                </CardFooter>
+              </Card>
             )
           })}
       </div>

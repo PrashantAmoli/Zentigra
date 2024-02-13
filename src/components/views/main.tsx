@@ -109,6 +109,10 @@ export function Main({ name = "Extension" }) {
       const activeTabId = tabs[0].id
       chrome.tabs.sendMessage(activeTabId, { action: newState })
     })
+
+    const delay = newState === "start" ? 1000 : 4000
+
+    setTimeout(() => window.close(), delay)
   }
 
   return (
@@ -117,11 +121,11 @@ export function Main({ name = "Extension" }) {
         <Button onClick={() => changeState("start")}>Start</Button>
         <Button onClick={() => changeState("stop")}>Stop</Button>
 
-        <pre className="w-full break-words">
+        {/* <pre className="w-full break-words">
           {JSON.stringify(sequencePreview)}
-        </pre>
-        <pre className="w-full break-words">{JSON.stringify(sequence)}</pre>
-        <pre className="w-full break-words">{JSON.stringify(steps)}</pre>
+        </pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(sequence)}</pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(steps)}</pre> */}
 
         {sequencePreview.length === 0 ? null : (
           <>

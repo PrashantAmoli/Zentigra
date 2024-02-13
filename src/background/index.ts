@@ -1,20 +1,22 @@
 export {}
 
+const frontendUrl = process.env.PLASMO_PUBLIC_FRONTEND_URL
+
 console.log(
   "Live now; make now always the most precious time. Now will never come again."
 )
 
 const openPopup = () => {
-  const url = chrome.runtime.getURL("/popup.html")
-  console.log(url)
   chrome.tabs.create({
-    url: url || "https://app.salesrobot.co/accounts?onboardingRef=extension"
+    url: chrome.runtime.getURL("/popup.html")
   })
 }
 
 const openPreviewPage = () => {
   chrome.tabs.create({
-    url: "http://localhost:1947/preview"
+    url: frontendUrl
+      ? `${frontendUrl}/preview`
+      : "http://localhost:1947/preview"
   })
 }
 
@@ -26,17 +28,21 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // Log the message received from the content script
     console.log("Message from content script:", message.command, message.data)
 
-    // Send the message to the popup
     setTimeout(() => {
+      // Send the message to the popup
+
       // chrome.runtime.sendMessage({
       //   action: "backgroundToPopup",
       //   data: message.data,
       //   command: message.command
       // })
 
+      // Send the message to the preview page
       chrome.tabs.query(
         {
-          url: "http://localhost:1947/preview",
+          url: frontendUrl
+            ? `${frontendUrl}/preview`
+            : "http://localhost:1947/preview",
           currentWindow: true
           // active: true
         },
@@ -52,7 +58,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           })
         }
       )
-    }, 7000)
+
+      window.postMessage(
+        {
+          action: "backgroundToPreview",
+          data: message.data,
+          command: message.command
+        },
+        "*"
+      )
+    }, 5000)
   }
 })
 
@@ -61,11 +76,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
   console.log("Zentigra Installed ", details)
   if (details.reason === "install") {
     chrome.tabs.create({
-      url: "https://app.salesrobot.co/accounts?onboardingRef=extension"
+      url: frontendUrl ? `${frontendUrl}` : "https://zentigra.com"
     })
   } else if (details.reason === "update") {
-    openPopup()
-
     chrome.tabs.query({ active: true }, (tabDetails) => {
       //sends messages to all active tabs for now
       tabDetails.forEach((tab) => {
