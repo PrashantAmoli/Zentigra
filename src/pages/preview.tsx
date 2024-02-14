@@ -1,28 +1,35 @@
+import Image from "next/image"
 import { useEffect, useState } from "react"
+
+type SequenceType = {
+  url: string
+  x: number
+  y: number
+}
 
 export default function PreviewPage() {
   const extensionIdentifier = "your-extension-identifier"
-  const [sequencePreview, setSequencePreview] = useState(null)
+  const [sequencePreview, setSequencePreview] = useState<SequenceType[] | null>(
+    null
+  )
 
   useEffect(() => {
-    // window.addEventListener("message", (event) => {
-    //   console.log("BGSW=>Next.js:", event.data)
-
-    //   setSequencePreview(event.data)
-
-    //   if (event.data.action === "backgroundToPreview") {
-    //     setSequencePreview(event.data)
-    //   }
-    // })
-
     window.onmessage = (event) => {
+      console.info("Events: ", event.origin, event.data)
+
       if (event.data.command === "stop") {
-        console.log("BGSW=>Next.js:", event.data)
-        setSequencePreview(event.data)
+        console.log("CS=>Next.js:", event.data)
+        setSequencePreview(event.data.data)
+
+        // Send the sequence to the extension
+        window.parent.postMessage(
+          {
+            command: "received-sequence",
+            data: "Sequence received successfully!"
+          },
+          "*"
+        )
       }
-      // Do something with the data in your Next.js application
-      // For example, update the DOM or trigger a function
-      // ...
     }
   }, [])
 
@@ -31,7 +38,22 @@ export default function PreviewPage() {
       <main>
         <h1 className="w-full px-3 py-2 text-xl font-semibold">Preview Page</h1>
 
-        {sequencePreview ? null : (
+        {sequencePreview ? (
+          <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto">
+            <h2 className="text-xl">{sequencePreview.length} Steps: </h2>
+
+            {sequencePreview.map((step, index) => (
+              <Image
+                key={index}
+                src={step.url}
+                width={300}
+                height={220}
+                alt={step.url}
+                className="w-full shadow-xl rounded-xl "
+              />
+            ))}
+          </div>
+        ) : (
           <h2 className="text-xl font-semibold text-center transition-all animate-pulse">
             Loading sequence preview...
           </h2>

@@ -31,13 +31,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     setTimeout(() => {
       // Send the message to the popup
-
       // chrome.runtime.sendMessage({
       //   action: "backgroundToPopup",
       //   data: message.data,
       //   command: message.command
       // })
-
       // Send the message to the preview page
       // chrome.tabs.query(
       //   {
@@ -59,15 +57,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       //     })
       //   }
       // )
-
-      window.postMessage(
-        {
-          action: "backgroundToPreview",
-          data: message.data,
-          command: message.command
-        },
-        "*"
-      )
+      // window.postMessage(
+      //   {
+      //     action: "backgroundToPreview",
+      //     data: message.data,
+      //     command: message.command
+      //   },
+      //   "*"
+      // )
     }, 5000)
   }
 })

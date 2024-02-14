@@ -56,7 +56,7 @@ export const Sequences = () => {
 
   return (
     <>
-      <div className="grid w-full grid-cols-1 gap-5 p-5 mx-auto max-w-7xl md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid w-full grid-cols-1 gap-5 p-5 mx-auto max-w-7xl md:grid-cols-2 lg:grid-cols-3">
         {sequences &&
           sequences.map((sequence: any, key) => {
             return (
