@@ -1,5 +1,6 @@
 import { useUser } from "@clerk/clerk-react"
 import Image from "next/image"
+import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -16,6 +17,8 @@ type SequenceType = {
 }
 
 export default function PreviewPage() {
+  const router = useRouter()
+
   const extensionIdentifier = "your-extension-identifier"
   const [sequencePreview, setSequencePreview] = useState<SequenceType[] | null>(
     null
@@ -28,8 +31,6 @@ export default function PreviewPage() {
 
   useEffect(() => {
     window.onmessage = (event) => {
-      console.info("Events: ", event.origin, event.data)
-
       if (event.data.command === "stop") {
         console.log("CS=>Next.js:", event.data)
         setSequencePreview(event.data.data)
@@ -126,14 +127,22 @@ export default function PreviewPage() {
       return false
     }
 
+    setTimeout(() => {
+      toast.info("Redirecting to sequence page...")
+
+      setTimeout(() => {
+        router.push(`/${sequenceId}`)
+      }, 3000)
+    }, 3000)
+
     return true
   }
 
   return (
     <>
       <main className="w-full p-2">
-        <Tabs className="mx-auto">
-          <TabsList defaultValue={"preview"} className="w-full mx-auto shadow">
+        <Tabs className="mx-auto" defaultValue={"preview"}>
+          <TabsList className="w-full mx-auto shadow">
             <TabsTrigger className="w-full" value="preview">
               Preview
             </TabsTrigger>
@@ -169,10 +178,6 @@ export default function PreviewPage() {
                 </h2>
               </div>
             )}
-
-            <pre className="w-full overflow-x-scroll text-xs break-words">
-              {userData && JSON.stringify(userData, null, 2)}
-            </pre>
 
             <pre className="w-full overflow-x-scroll text-xs break-words">
               {sequencePreview && JSON.stringify(sequencePreview, null, 2)}

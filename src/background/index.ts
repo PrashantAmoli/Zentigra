@@ -1,7 +1,7 @@
 export {}
 
 const frontendUrl =
-  process.env.PLASMO_PUBLIC_FRONTEND_URL || "https://localhost:1947"
+  process.env.PLASMO_PUBLIC_FRONTEND_URL || "http://localhost:1947"
 
 console.log(
   "Live now; make now always the most precious time. Now will never come again."

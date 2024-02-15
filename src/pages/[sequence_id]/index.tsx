@@ -72,20 +72,27 @@ export const StepsPage = () => {
           steps.map((step: any, key) => {
             return (
               <div
-                className="w-full max-w-4xl p-2 py-5 mx-auto shadow-xl rounded-2xl"
+                className="w-full max-w-4xl p-3 py-5 mx-auto shadow-xl rounded-2xl"
                 key={key}>
                 <Image
                   src={step.image}
                   alt={step.title}
                   width={200}
                   height={200}
-                  className="w-full"
+                  className="w-full mb-4 rounded-xl drop-shadow-xl"
                 />
 
                 <h3 className="text-xl font-semibold">
                   {step.position}: {step.title}
                 </h3>
+
                 <p>{step.description}</p>
+
+                <div className="flex justify-around w-full text-xs">
+                  <span>X: {step.x}</span>
+
+                  <span>Y: {step.y}</span>
+                </div>
               </div>
             )
           })}
