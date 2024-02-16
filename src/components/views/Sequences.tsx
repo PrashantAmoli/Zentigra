@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/clerk-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -15,11 +16,20 @@ import { supabase } from "~supabase"
 
 export const Sequences = () => {
   const [sequences, setSequences] = useState<any>([])
+  const userData = useUser()
 
   const fetchAllSequences = async () => {
+    const userEmail = userData?.user?.emailAddresses[0]?.emailAddress
+
+    if (!userEmail) {
+      toast.error("User email not found.")
+      return
+    }
+
     const { data: sequencesData, error: sequencesError } = await supabase
       .from("sequences")
       .select("*")
+      .eq("created_by", userEmail)
 
     if (sequencesError) console.log(sequencesError)
 
