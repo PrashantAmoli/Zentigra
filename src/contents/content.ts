@@ -5,7 +5,7 @@ export {}
 let currentState = "stop"
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log("New state: ", message.action)
+  console.log("Recording state: ", message.action)
   currentState = message.action
 
   if (currentState == "stop") {
@@ -13,7 +13,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     chrome.storage.local.get(["image"]).then((result) => {
       let images = JSON.parse(result["image"])
-      console.log("inside the render image")
       for (let image of images) {
         sequenceData.push(image)
       }

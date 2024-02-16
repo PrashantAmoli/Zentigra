@@ -151,7 +151,7 @@ export const StepsPage = () => {
                   />
 
                   <div
-                    className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl sm:w-12 sm:h-12 border-yellow-400/80 bg-green-400/25 "
+                    className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl sm:w-12 sm:h-12 border-yellow-400/80 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
                     style={{
                       top: `${step.y * 100}%`,
                       left: `${step.x * 100}%`
