@@ -150,24 +150,44 @@ export default function PreviewPage() {
           </TabsList>
 
           <TabsContent value="preview">
-            <h1 className="w-full px-3 py-2 text-xl font-semibold">
-              Preview Sequence
-            </h1>
-
             {sequencePreview ? (
-              <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto">
-                <h2 className="text-xl">{sequencePreview.length} Steps: </h2>
+              <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto mb-10">
+                <h1 className="w-full px-2 pt-2 text-xl font-semibold">
+                  Preview Sequence: {sequencePreview.length} steps{" "}
+                </h1>
 
-                {sequencePreview.map((step, index) => (
-                  <Image
-                    key={index}
-                    src={step.url}
-                    width={300}
-                    height={220}
-                    alt={step.url}
-                    className="w-full shadow-xl rounded-xl "
-                  />
-                ))}
+                {sequencePreview.map((step: any, key) => {
+                  return (
+                    <div className="p-2.5 border shadow-xl rounded-xl hover:shadow-2xl">
+                      <div className="relative w-full mb-2">
+                        <Image
+                          src={step.url}
+                          alt={step.url}
+                          width={"440"}
+                          height={"330"}
+                          className="object-contain w-full h-full shadow-xl rounded-xl"
+                        />
+
+                        <div
+                          className="absolute z-20 w-12 h-12 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl border-yellow-400/80 bg-green-400/25 "
+                          style={{
+                            top: `${step.y * 100}%`,
+                            left: `${step.x * 100}%`
+                          }}></div>
+                      </div>
+
+                      <div className="p-2 my-2">
+                        {/* <h3 className="text-lg font-semibold ">
+                          {key + 1}: {step.title}
+                        </h3> */}
+
+                        {/* <p className="text-sm text-secondary-foreground">
+                          {step.description}
+                        </p> */}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             ) : (
               <div className="animate-bounce">
@@ -177,9 +197,9 @@ export default function PreviewPage() {
               </div>
             )}
 
-            <pre className="w-full overflow-x-scroll text-xs break-words">
+            {/* <pre className="w-full overflow-x-scroll text-xs break-words">
               {sequencePreview && JSON.stringify(sequencePreview, null, 2)}
-            </pre>
+            </pre> */}
           </TabsContent>
 
           <TabsContent value="options">
