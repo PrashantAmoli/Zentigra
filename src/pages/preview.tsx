@@ -159,23 +159,6 @@ export default function PreviewPage() {
                 {sequencePreview.map((step: any, key) => {
                   return (
                     <div className="p-2.5 border shadow-xl rounded-xl hover:shadow-2xl">
-                      <div className="relative w-full mb-2">
-                        <Image
-                          src={step.url}
-                          alt={step.url}
-                          width={"440"}
-                          height={"330"}
-                          className="object-contain w-full h-full shadow-xl rounded-xl"
-                        />
-
-                        <div
-                          className="absolute z-20 w-12 h-12 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl border-yellow-400/80 bg-green-400/25 "
-                          style={{
-                            top: `${step.y * 100}%`,
-                            left: `${step.x * 100}%`
-                          }}></div>
-                      </div>
-
                       <div className="p-2 my-2">
                         {/* <h3 className="text-lg font-semibold ">
                           {key + 1}: {step.title}
@@ -184,6 +167,23 @@ export default function PreviewPage() {
                         {/* <p className="text-sm text-secondary-foreground">
                           {step.description}
                         </p> */}
+                      </div>
+
+                      <div className="relative w-full">
+                        <Image
+                          src={step.url}
+                          alt={step.url}
+                          width={"440"}
+                          height={"330"}
+                          className="object-contain w-full h-full border shadow-xl rounded-xl"
+                        />
+
+                        <div
+                          className="absolute z-20 w-12 h-12 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl border-yellow-400/80 bg-green-400/25 "
+                          style={{
+                            top: `${step.y * 100}%`,
+                            left: `${step.x * 100}%`
+                          }}></div>
                       </div>
                     </div>
                   )

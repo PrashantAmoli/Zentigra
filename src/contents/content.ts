@@ -1,19 +1,8 @@
-import * as htmlScreenCaptureJs from "html-screen-capture-js"
 import * as htmlToImage from "html-to-image"
-
-const frontendUrl = "http://localhost:1947"
 
 export {}
 
-var currentState = "stop"
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.info("Content script loaded")
-  chrome.runtime.sendMessage({
-    action: "contentScriptToPopup",
-    data: "Content Script Loaded"
-  })
-})
+let currentState = "stop"
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   console.log("New state: ", message.action)
@@ -22,16 +11,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (currentState == "stop") {
     let sequenceData = []
 
-    //TEMPORARY
     chrome.storage.local.get(["image"]).then((result) => {
       let images = JSON.parse(result["image"])
       console.log("inside the render image")
       for (let image of images) {
-        console.log("inside the loop")
-        // renderImage(image)
-
         sequenceData.push(image)
       }
+
       console.info("sequenceData: ", sequenceData)
 
       // TODO: send the data to the Zentigra app
@@ -46,15 +32,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     // clear up the storage
     chrome.storage.local.remove(["image"]).then((result) => {
-      console.log("cleaned the image")
+      console.log("Sequence data cleared from storage")
     })
   }
 })
 
 document.addEventListener("mousedown", function (event) {
-  const x = event.clientX/window.innerWidth
-  const y = event.clientY/window.innerHeight
-  console.log("Mouse clicked at:", { x: event.clientX/window.innerWidth, y: event.clientY/window.innerHeight })
+  const x = event.clientX / window.innerWidth
+  const y = event.clientY / window.innerHeight
+  // console.log("Mouse clicked at:", { x: event.clientX/window.innerWidth, y: event.clientY/window.innerHeight })
 
   // TODO: send sample data to the preview page
   // chrome.runtime.sendMessage({
@@ -76,7 +62,7 @@ document.addEventListener("mousedown", function (event) {
     })
     .then(function (canvas) {
       const base64image = canvas.toDataURL("image/png")
-      console.log("this is the image: ", base64image)
+      console.log("image: ", { image: base64image })
 
       chrome.storage.local.get(["image"]).then((result) => {
         // console.log("Value currently is " + result["image"])
@@ -88,10 +74,9 @@ document.addEventListener("mousedown", function (event) {
         }
 
         let imageArray = JSON.parse(imageString)
-        console.log("imageArray: ", imageArray)
         imageArray.push({ url: base64image, x, y })
         imageString = JSON.stringify(imageArray)
-        console.log("imageArrary after: ", imageArray.length)
+        console.log("imageArray: ", imageArray.length, imageArray)
 
         chrome.storage.local.set({ image: imageString }).then(() => {
           console.log("Value is set")

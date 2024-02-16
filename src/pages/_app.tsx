@@ -1,3 +1,4 @@
+import { ThemeProvider } from "next-themes"
 import { Toaster } from "sonner"
 
 import { Navbar } from "~components/Navbar"
@@ -8,13 +9,15 @@ import "~styles/globals.css"
 export default function App({ Component, pageProps }) {
   return (
     <>
-      <ClerkWrapper>
-        <Navbar />
+      <ThemeProvider attribute="class">
+        <ClerkWrapper>
+          <Navbar />
 
-        <Component {...pageProps} />
-      </ClerkWrapper>
+          <Component {...pageProps} />
 
-      <Toaster position="bottom-center" richColors closeButton />
+          <Toaster position="bottom-center" richColors closeButton />
+        </ClerkWrapper>
+      </ThemeProvider>
     </>
   )
 }

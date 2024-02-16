@@ -1,4 +1,10 @@
 import { useUser } from "@clerk/clerk-react"
+import {
+  formatDate,
+  formatDistanceToNow,
+  formatDistanceToNowStrict,
+  formatISO
+} from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -77,7 +83,23 @@ export const Sequences = () => {
                 </CardHeader>
 
                 <CardContent>
-                  <p className="text-xs">Sequence Id: {sequence.id}</p>
+                  {/* <p className="text-xs">Sequence Id: {sequence.id}</p> */}
+                  <p className="text-xs text-right">{sequence.created_by}</p>
+
+                  <div className="flex justify-between">
+                    <p className="text-xs">
+                      {new Date(sequence.created_at).toDateString()}
+                    </p>
+
+                    <p className="text-xs text-right">
+                      {formatDistanceToNowStrict(
+                        new Date(sequence.created_at),
+                        {
+                          addSuffix: true
+                        }
+                      )}
+                    </p>
+                  </div>
                 </CardContent>
 
                 <CardFooter className="flex justify-end gap-3">
