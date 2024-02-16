@@ -130,10 +130,8 @@ export default function PreviewPage() {
     setTimeout(() => {
       toast.info("Redirecting to sequence page...")
 
-      setTimeout(() => {
-        router.push(`/${sequenceId}`)
-      }, 3000)
-    }, 3000)
+      setTimeout(() => router.push(`/${sequenceId}`), 2000)
+    }, 2000)
 
     return true
   }

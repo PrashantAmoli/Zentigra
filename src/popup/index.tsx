@@ -13,6 +13,9 @@ function IndexPopup() {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [authData, setAuthData] = useState<null | AuthData>(null)
 
+  const frontendURL =
+    process.env.PLASMO_PUBLIC_FRONTEND_URL || "http://localhost:1947"
+
   useEffect(() => {
     const iframe = iframeRef.current
     if (iframe) {
@@ -48,7 +51,7 @@ function IndexPopup() {
 
         <div className="w-full h-20">
           <iframe
-            src="http://localhost:1947/profile"
+            src={`${frontendURL}/profile`}
             title="Zentigra IFrame"
             width="100%"
             height="100%"

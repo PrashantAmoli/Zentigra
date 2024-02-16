@@ -69,7 +69,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
   console.log("Zentigra Installed ", details)
   if (details.reason === "install") {
     chrome.tabs.create({
-      url: frontendUrl ? `${frontendUrl}` : "https://zentigra.com"
+      url: frontendUrl || "https://zentigra.vercel.app"
     })
   } else if (details.reason === "update") {
     chrome.tabs.query({ active: false }, (tabDetails) => {
