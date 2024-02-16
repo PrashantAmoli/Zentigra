@@ -13,6 +13,9 @@ function IndexPopup() {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [authData, setAuthData] = useState<null | AuthData>(null)
 
+  const frontendURL =
+    process.env.PLASMO_PUBLIC_FRONTEND_URL || "http://localhost:1947"
+
   useEffect(() => {
     const iframe = iframeRef.current
     if (iframe) {
@@ -38,17 +41,23 @@ function IndexPopup() {
       <main className="flex flex-col items-center justify-around w-full overflow-x-hidden min-w-96 h-96">
         <h1 className="text-3xl font-bold text-center">Zentigra</h1>
 
-        {authData?.isSignedIn ? (
-          <Main />
+        {authData ? (
+          <>
+            {authData?.isSignedIn ? (
+              <Main />
+            ) : (
+              <h3 className="w-full text-center">Sign in to capture</h3>
+            )}
+          </>
         ) : (
-          <h3 className="w-full text-center">Sign in to capture</h3>
+          <h3 className="w-full text-center animate-pulse">Loading...</h3>
         )}
 
         {/* <IFrame /> */}
 
         <div className="w-full h-20">
           <iframe
-            src="http://localhost:1947/profile"
+            src={`${frontendURL}/profile`}
             title="Zentigra IFrame"
             width="100%"
             height="100%"
@@ -68,7 +77,7 @@ function IndexPopup() {
                     },
                     "*"
                   )
-                }, 3000)
+                }, 1500)
             }}
             // allow iframe to communicate with the parent window on different origin domain
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen;"
