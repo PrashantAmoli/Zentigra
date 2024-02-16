@@ -52,9 +52,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 })
 
 document.addEventListener("mousedown", function (event) {
-  const x = event.clientX
-  const y = event.clientY
-  console.log("Mouse clicked at:", { x: event.clientX, y: event.clientY })
+  const x = event.clientX/window.innerWidth
+  const y = event.clientY/window.innerHeight
+  console.log("Mouse clicked at:", { x: event.clientX/window.innerWidth, y: event.clientY/window.innerHeight })
 
   // TODO: send sample data to the preview page
   // chrome.runtime.sendMessage({
