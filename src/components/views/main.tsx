@@ -109,19 +109,25 @@ export function Main({ name = "Extension" }) {
       const activeTabId = tabs[0].id
       chrome.tabs.sendMessage(activeTabId, { action: newState })
     })
+
+    const delay = newState === "start" ? 1000 : 4000
+
+    setTimeout(() => window.close(), delay)
   }
 
   return (
     <>
       <div className="flex flex-col items-center justify-center w-full gap-1 p-2">
-        <Button onClick={() => changeState("start")}>Start</Button>
-        <Button onClick={() => changeState("stop")}>Stop</Button>
+        <div className="flex w-full justify-evenly">
+          <Button onClick={() => changeState("start")}>Start</Button>
+          <Button onClick={() => changeState("stop")}>Stop</Button>
+        </div>
 
-        <pre className="w-full break-words">
+        {/* <pre className="w-full break-words">
           {JSON.stringify(sequencePreview)}
-        </pre>
-        <pre className="w-full break-words">{JSON.stringify(sequence)}</pre>
-        <pre className="w-full break-words">{JSON.stringify(steps)}</pre>
+        </pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(sequence)}</pre> */}
+        {/* <pre className="w-full break-words">{JSON.stringify(steps)}</pre> */}
 
         {sequencePreview.length === 0 ? null : (
           <>

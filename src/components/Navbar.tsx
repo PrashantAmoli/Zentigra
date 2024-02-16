@@ -1,12 +1,15 @@
 import { SignInButton, useAuth, UserButton } from "@clerk/clerk-react"
+import Link from "next/link"
 
 export const Navbar = () => {
   const { isSignedIn } = useAuth()
 
   return (
     <>
-      <nav className="w-full h-14 shadow-xl border flex justify-between items-center px-2 md:px-10">
-        <h3 className="text-xl md:text-2xl font-bold">Zentigra</h3>
+      <nav className="flex items-center justify-between w-full px-2 border shadow-xl h-14 md:px-10">
+        <Link href="/">
+          <h3 className="text-xl font-bold md:text-2xl">Zentigra</h3>
+        </Link>
 
         {isSignedIn ? (
           <UserButton />

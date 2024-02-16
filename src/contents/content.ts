@@ -1,6 +1,8 @@
 import * as htmlScreenCaptureJs from "html-screen-capture-js"
 import * as htmlToImage from "html-to-image"
 
+const frontendUrl = "http://localhost:1947"
+
 export {}
 
 var currentState = "stop"
@@ -14,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log("this will be the new state: ", message.action)
+  console.log("New state: ", message.action)
   currentState = message.action
 
   if (currentState == "stop") {
@@ -32,9 +34,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
       console.info("sequenceData: ", sequenceData)
 
-      //send the data to the backend
+      // TODO: send the data to the Zentigra app
+      // Open Zentigra preview page & send the sequenceData to it
+      // send to background
       chrome.runtime.sendMessage({
-        action: "contentScriptToPopup",
+        action: "contentScriptToPreview",
         command: "stop",
         data: sequenceData
       })
@@ -47,34 +51,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 })
 
-//TEMPORARY
-const renderImage = (src) => {
-  const imgElement = document.createElement("img")
-  imgElement.src = src
-  imgElement.alt = "Description of the image"
-  imgElement.width = 800
-  document.body.appendChild(imgElement)
-}
-
-const captureScreen = () => {
-  const ss = htmlScreenCaptureJs.capture(
-    htmlScreenCaptureJs.OutputType.STRING,
-    document
-  )
-
-  console.log("ss: ", `data:text/html;charset=utf-8,${encodeURI(`${ss}`)}`)
-}
-
 document.addEventListener("mousedown", function (event) {
-  const x = event.clientX
-  const y = event.clientY
-  console.log("Mouse clicked at:", { x: event.clientX, y: event.clientY })
+  const x = event.clientX/window.innerWidth
+  const y = event.clientY/window.innerHeight
+  console.log("Mouse clicked at:", { x: event.clientX/window.innerWidth, y: event.clientY/window.innerHeight })
 
-  // captureScreen()
+  // TODO: send sample data to the preview page
+  // chrome.runtime.sendMessage({
+  //   action: "contentScriptToPreview",
+  //   command: "start",
+  //   data: { x, y }
+  // })
 
-  if (currentState !== "start") {
-    return
-  }
+  if (currentState !== "start") return
 
   const screenshotTarget = document.body
 
@@ -86,19 +75,18 @@ document.addEventListener("mousedown", function (event) {
       canvasHeight: window.innerHeight
     })
     .then(function (canvas) {
-      // document.body.appendChild(canvas);
-
       const base64image = canvas.toDataURL("image/png")
       console.log("this is the image: ", base64image)
 
       chrome.storage.local.get(["image"]).then((result) => {
-        console.log("Value currently is " + result["image"])
+        // console.log("Value currently is " + result["image"])
         let imageString = result["image"]
 
-        console.log("this is the imageString: ", imageString)
+        // console.log("this is the imageString: ", imageString)
         if (imageString == null) {
           imageString = "[]"
         }
+
         let imageArray = JSON.parse(imageString)
         console.log("imageArray: ", imageArray)
         imageArray.push({ url: base64image, x, y })
@@ -110,4 +98,27 @@ document.addEventListener("mousedown", function (event) {
         })
       })
     })
+})
+
+// window.onmessage = (event) => {
+//   console.log("onmessage in CS: ", event.data)
+
+//   if (event.data.command === "received-sequence") {
+//     console.log("Next=>CS: ", event.data)
+//   }
+// }
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  console.log("Message from background: ", message)
+
+  if (message.action === "backgroundToPreview") {
+    window.postMessage(
+      {
+        action: "backgroundToPreview",
+        command: "stop",
+        data: message.data
+      },
+      "*"
+    )
+  }
 })

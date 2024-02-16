@@ -5,7 +5,8 @@ import { useRouter } from "next/router"
 const publicPages = [
   "/auth/sign-in/[[...index]]",
   "/auth/sign-up/[[...index]]",
-  "/popup"
+  "/popup",
+  "/profile"
 ]
 
 export const ClerkWrapper = ({ children }) => {

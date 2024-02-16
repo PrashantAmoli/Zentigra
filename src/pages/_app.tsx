@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }) {
         <Component {...pageProps} />
       </ClerkWrapper>
 
-      <Toaster position="bottom-center" />
+      <Toaster position="bottom-center" richColors closeButton />
     </>
   )
 }
