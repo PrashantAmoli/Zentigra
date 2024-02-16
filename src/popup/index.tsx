@@ -41,10 +41,16 @@ function IndexPopup() {
       <main className="flex flex-col items-center justify-around w-full overflow-x-hidden min-w-96 h-96">
         <h1 className="text-3xl font-bold text-center">Zentigra</h1>
 
-        {authData?.isSignedIn ? (
-          <Main />
+        {authData ? (
+          <>
+            {authData?.isSignedIn ? (
+              <Main />
+            ) : (
+              <h3 className="w-full text-center">Sign in to capture</h3>
+            )}
+          </>
         ) : (
-          <h3 className="w-full text-center">Sign in to capture</h3>
+          <h3 className="w-full text-center animate-pulse">Loading...</h3>
         )}
 
         {/* <IFrame /> */}
@@ -71,7 +77,7 @@ function IndexPopup() {
                     },
                     "*"
                   )
-                }, 3000)
+                }, 1500)
             }}
             // allow iframe to communicate with the parent window on different origin domain
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen;"
