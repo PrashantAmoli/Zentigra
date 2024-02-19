@@ -52,6 +52,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 })
 
 document.addEventListener("mousedown", function (event) {
+  const clickedText ='Clicked on ' + '"'+(event.srcElement as HTMLElement).innerText +'"';
   const x = event.clientX/window.innerWidth
   const y = event.clientY/window.innerHeight
   console.log("Mouse clicked at:", { x: event.clientX/window.innerWidth, y: event.clientY/window.innerHeight })
@@ -59,7 +60,7 @@ document.addEventListener("mousedown", function (event) {
   // TODO: send sample data to the preview page
   // chrome.runtime.sendMessage({
   //   action: "contentScriptToPreview",
-  //   command: "start",
+  //   command: "start"
   //   data: { x, y }
   // })
 
@@ -89,7 +90,7 @@ document.addEventListener("mousedown", function (event) {
 
         let imageArray = JSON.parse(imageString)
         console.log("imageArray: ", imageArray)
-        imageArray.push({ url: base64image, x, y })
+        imageArray.push({ url: base64image, x, y, clickedText })
         imageString = JSON.stringify(imageArray)
         console.log("imageArrary after: ", imageArray.length)
 

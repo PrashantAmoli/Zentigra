@@ -14,6 +14,8 @@ type SequenceType = {
   url: string
   x: number
   y: number
+  clickedText: string,
+  title: string
 }
 
 export default function PreviewPage() {
@@ -105,7 +107,7 @@ export default function PreviewPage() {
 
       return {
         title: "Step " + position,
-        description: "Some description",
+        description: step.clickedText,
         image: step.url,
         x: step.x,
         y: step.y,
@@ -161,14 +163,20 @@ export default function PreviewPage() {
                 <h2 className="text-xl">{sequencePreview.length} Steps: </h2>
 
                 {sequencePreview.map((step, index) => (
-                  <Image
-                    key={index}
-                    src={step.url}
-                    width={300}
-                    height={220}
-                    alt={step.url}
-                    className="w-full shadow-xl rounded-xl "
-                  />
+                  <div style={{marginBottom:'4rem'}}>
+                    <div className="relative " style={{maxWidth: '100%'}} >
+                      <img
+                            src={step.url}
+                            alt={step.title}
+                            width='100%'
+                            height='100%'
+                          />
+
+                      <div className="absolute rounded-none border-2 -translate-y-5 -translate-x-5" style={{width: '44px', height: '44px', borderRadius: '44px', border: '2px solid rgb(251, 146, 60)',top: `${step.y*100}%`, left: `${step.x*100}%`, backgroundColor: 'rgba(251, 146, 60, 0.3)'}}></div>
+                  </div>
+
+                  <p className="mt-4">{step.clickedText}</p> 
+                </div>
                 ))}
               </div>
             ) : (
