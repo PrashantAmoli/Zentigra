@@ -132,10 +132,8 @@ export default function PreviewPage() {
     setTimeout(() => {
       toast.info("Redirecting to sequence page...")
 
-      setTimeout(() => {
-        router.push(`/${sequenceId}`)
-      }, 3000)
-    }, 3000)
+      setTimeout(() => router.push(`/${sequenceId}`), 2000)
+    }, 2000)
 
     return true
   }
@@ -154,13 +152,11 @@ export default function PreviewPage() {
           </TabsList>
 
           <TabsContent value="preview">
-            <h1 className="w-full px-3 py-2 text-xl font-semibold">
-              Preview Sequence
-            </h1>
-
             {sequencePreview ? (
-              <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto">
-                <h2 className="text-xl">{sequencePreview.length} Steps: </h2>
+              <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto mb-10">
+                <h1 className="w-full px-2 pt-2 text-xl font-semibold">
+                  Preview Sequence: {sequencePreview.length} steps{" "}
+                </h1>
 
                 {sequencePreview.map((step, index) => (
                   <div style={{marginBottom:'4rem'}}>
@@ -187,9 +183,9 @@ export default function PreviewPage() {
               </div>
             )}
 
-            <pre className="w-full overflow-x-scroll text-xs break-words">
+            {/* <pre className="w-full overflow-x-scroll text-xs break-words">
               {sequencePreview && JSON.stringify(sequencePreview, null, 2)}
-            </pre>
+            </pre> */}
           </TabsContent>
 
           <TabsContent value="options">

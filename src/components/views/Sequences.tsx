@@ -99,7 +99,7 @@ export const Sequences = () => {
           })}
       </div>
 
-      <pre className="w-full break-before-all">{JSON.stringify(sequences)}</pre>
+      {/* <pre className="w-full break-before-all">{JSON.stringify(sequences)}</pre> */}
     </>
   )
 }

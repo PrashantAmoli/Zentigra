@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import { Button } from "~components/ui/button"
+import { Separator } from "~components/ui/separator"
 import { supabase } from "~supabase"
 
 export const StepsPage = () => {
@@ -15,7 +16,12 @@ export const StepsPage = () => {
   const fetchStepsFromSequenceId = async () => {
     const { data: stepsData, error: stepsError } = await supabase
       .from("steps")
-      .select(`*`)
+      .select(
+        `
+      *,
+      sequences(name, description)
+      `
+      )
       .eq("sequence_id", sequence_id)
 
     if (stepsError) console.log(stepsError)
@@ -57,40 +63,72 @@ export const StepsPage = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between w-full p-2 md:px-5">
-        <h1 className="py-4 text-2xl font-bold text-center">Steps</h1>
+      <div className="flex flex-col justify-between w-full gap-4 p-2 mx-auto mt-2 sm:items-end sm:flex-row md:px-5 max-w-7xl">
+        <div className="w-full">
+          <h1 className="text-xl font-bold">
+            {steps?.[0]?.sequences?.name || "Sequence"}
+          </h1>
 
-        <div className="flex">
+          <p className="pl-2 text-sm text-secondary-foreground">
+            {steps?.[0]?.sequences?.description || "Description"}
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(window?.location?.href)
+              toast.success(`Link copied to clipboard`)
+            }}
+            variant="outline">
+            Share
+          </Button>
+
           <Button onClick={() => deleteSequence()} variant="destructive">
-            Delete Sequence
+            Delete
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 p-5 " style={{margin: '10%'}}>
+      <Separator className="mx-auto mb-6 max-w-7xl" />
+
+      <div className="flex flex-col max-w-4xl p-2 mx-auto gap-9">
         {steps &&
           steps.map((step: any, key) => {
             return (
-                <div style={{marginBottom:'4rem'}}>
-                  <div className="relative " style={{maxWidth: '100%'}} >
-                    <img
-                          src={step.image}
-                          alt={step.title}
-                          width='100%'
-                          height='100%'
-                        />
+              <div className="p-2.5 border shadow-xl rounded-xl hover:shadow-2xl">
+                <div className="relative w-full mb-2">
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    width={"500"}
+                    height={"330"}
+                    className="object-contain w-full h-full shadow-xl rounded-xl"
+                  />
 
-                    <div className="absolute rounded-none border-2 -translate-y-5 -translate-x-5" style={{width: '44px', height: '44px', borderRadius: '44px', border: '2px solid rgb(251, 146, 60)',top: `${step.y*100}%`, left: `${step.x*100}%`, backgroundColor: 'rgba(251, 146, 60, 0.3)'}}></div>
-                 </div>
+                  <div
+                    className="absolute z-20 w-12 h-12 -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl border-yellow-400/80 bg-green-400/25 "
+                    style={{
+                      top: `${step.y * 100}%`,
+                      left: `${step.x * 100}%`
+                    }}></div>
+                </div>
 
-                 <h3 className="text-xl font-semibold">
-                   {step.position}: {step.title}
-                 </h3>
-                 <p>{step.description}</p> 
+                <div className="p-2 my-2">
+                  <h3 className="text-lg font-semibold ">
+                    {step.position}: {step.title}
+                  </h3>
+
+                  <p className="text-sm text-secondary-foreground">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             )
           })}
       </div>
+
+      <div className="w-full h-10"></div>
     </>
   )
 }

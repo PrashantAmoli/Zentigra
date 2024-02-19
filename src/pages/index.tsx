@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+import { Separator } from "~components/ui/separator"
 import Sequences from "~components/views/Sequences"
 import Welcome from "~components/views/Welcome"
 import { supabase } from "~supabase"
@@ -32,8 +33,10 @@ function IndexPage() {
 
   return (
     <>
-      <main className="w-full overflow-x-hidden">
+      <main className="w-full min-h-screen overflow-x-hidden">
         <Welcome />
+
+        <Separator className="w-full mx-auto max-w-7xl" />
 
         <Sequences />
       </main>
