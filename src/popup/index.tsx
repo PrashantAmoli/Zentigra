@@ -2,7 +2,7 @@ import "~styles/globals.css"
 
 import { useEffect, useRef, useState } from "react"
 
-import IFrame from "~components/views/IFrame"
+import { Separator } from "~components/ui/separator"
 import { Main } from "~components/views/main"
 
 type AuthData = {
@@ -38,22 +38,26 @@ function IndexPopup() {
 
   return (
     <>
-      <main className="flex flex-col items-center justify-around w-full overflow-x-hidden min-w-96 h-96">
-        <h1 className="text-3xl font-bold text-center">Zentigra</h1>
+      <main className="flex flex-col items-center justify-between w-full py-4 overflow-x-hidden min-w-96 h-96">
+        <div className="w-full">
+          <h1 className="text-3xl font-bold text-center">Zentigra</h1>
+
+          <Separator className="w-11/12 mx-auto my-1" />
+        </div>
 
         {authData ? (
           <>
             {authData?.isSignedIn ? (
               <Main />
             ) : (
-              <h3 className="w-full text-center">Sign in to capture</h3>
+              <h3 className="w-full text-center animate-pulse">
+                Sign in to capture
+              </h3>
             )}
           </>
         ) : (
           <h3 className="w-full text-center animate-pulse">Loading...</h3>
         )}
-
-        {/* <IFrame /> */}
 
         <div className="w-full h-20">
           <iframe

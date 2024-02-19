@@ -1,6 +1,6 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react"
+import { SignOutButton, useUser } from "@clerk/clerk-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 import { Button } from "~components/ui/button"
 
@@ -24,17 +24,20 @@ export default function Home() {
     }
   }, [userData])
 
+  if (!userData || !userData.isLoaded)
+    return <h2 className="text-center">Loading... Please wait</h2>
+
   return (
     <div className="fixed inset-0 z-30 flex flex-col items-center justify-center w-full bg-white">
       {userData.isSignedIn ? (
         <>
-          <p className="w-fit">{userData?.user?.fullName}</p>
+          <p className="text-xs w-fit">{userData?.user?.fullName}</p>
 
-          <p className="w-fit">
+          <p className="text-xs w-fit">
             {userData?.user?.emailAddresses[0].emailAddress}
           </p>
 
-          <Button variant="destructive" className="w-fit">
+          <Button variant="destructive" className="w-fit" asChild>
             <SignOutButton />
           </Button>
         </>

@@ -1,5 +1,4 @@
 import { ThemeProvider } from "next-themes"
-import { Toaster } from "sonner"
 
 import { Navbar } from "~components/Navbar"
 import ClerkWrapper from "~components/wrappers/ClerkWrapper"
@@ -11,11 +10,11 @@ export default function App({ Component, pageProps }) {
     <>
       <ThemeProvider attribute="class">
         <ClerkWrapper>
-          <Navbar />
+          <main className="w-full overflow-x-hidden min-h-dvh bg-gradient-to-tr from-sky-50 via-white to-sky-50 dark:bg-gradient-to-tr dark:from-background dark:via-slate-950 dark:to-stone-950">
+            <Navbar />
 
-          <Component {...pageProps} />
-
-          <Toaster position="bottom-center" richColors closeButton />
+            <Component {...pageProps} />
+          </main>
         </ClerkWrapper>
       </ThemeProvider>
     </>

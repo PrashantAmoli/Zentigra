@@ -1,10 +1,5 @@
 import { useUser } from "@clerk/clerk-react"
-import {
-  formatDate,
-  formatDistanceToNow,
-  formatDistanceToNowStrict,
-  formatISO
-} from "date-fns"
+import { formatDistanceToNowStrict } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -18,6 +13,7 @@ import {
   CardHeader,
   CardTitle
 } from "~components/ui/card"
+import { Separator } from "~components/ui/separator"
 import { supabase } from "~supabase"
 
 export const Sequences = () => {
@@ -67,12 +63,22 @@ export const Sequences = () => {
   }
 
   useEffect(() => {
-    fetchAllSequences()
+    toast.promise(fetchAllSequences(), {
+      loading: "Loading sequences",
+      success: "Sequences loaded",
+      error: "Failed to load sequences"
+    })
   }, [])
 
   return (
     <>
-      <div className="grid w-full grid-cols-1 gap-5 p-5 mx-auto max-w-7xl md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex w-11/12 mx-auto max-w-7xl">
+        <h2 className="text-2xl font-semibold ">Sequences</h2>
+      </div>
+
+      <Separator className="w-11/12 mx-auto my-2 max-w-7xl" />
+
+      <div className="grid w-full grid-cols-1 gap-8 sm:gap-5 p-2.5 mx-auto my-4 max-w-7xl md:grid-cols-2 lg:grid-cols-3">
         {sequences &&
           sequences.map((sequence: any, key) => {
             return (
