@@ -32,6 +32,7 @@ export const Sequences = () => {
       .from("sequences")
       .select("*")
       .eq("created_by", userEmail)
+      .order("created_at", { ascending: true })
 
     if (sequencesError) console.log(sequencesError)
 
@@ -84,8 +85,10 @@ export const Sequences = () => {
             return (
               <Card key={key}>
                 <CardHeader>
-                  <CardTitle>{sequence.name}</CardTitle>
-                  <CardDescription>{sequence.description}</CardDescription>
+                  <CardTitle className="truncate">{sequence.name}</CardTitle>
+                  <CardDescription className="line-clamp-2">
+                    {sequence.description}
+                  </CardDescription>
                 </CardHeader>
 
                 <CardContent>

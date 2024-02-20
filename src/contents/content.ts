@@ -68,6 +68,15 @@ document.addEventListener("mousedown", function (event) {
   const clickedElement = event.target as HTMLElement
   let title = ""
 
+  // get content of meta description from the meta tag in the head
+  const metaDescription =
+    document
+      .querySelector("meta[name='description']")
+      ?.getAttribute("content") || "No description found"
+
+  const description = `On ${document.title} page 
+  (${metaDescription}) `
+
   switch (clickedElement?.tagName) {
     case "BUTTON":
       title = `Clicked button: ${clickedElement.textContent}`
@@ -94,14 +103,6 @@ document.addEventListener("mousedown", function (event) {
       title = `Clicked ${clickedElement.tagName.toLowerCase()}`
       break
   }
-  // get content of meta description from the meta tag in the head
-  const metaDescription =
-    document
-      .querySelector("meta[name='description']")
-      ?.getAttribute("content") || "No description found"
-
-  const description = `On ${document.title} page 
-  (${metaDescription}) `
 
   console.log(title, description)
 

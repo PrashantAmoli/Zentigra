@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+// import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom"
 import { toast } from "sonner"
 
 import { Button } from "~components/ui/button"
@@ -78,7 +79,7 @@ export const StepsPage = () => {
         />
       </Head>
 
-      <div className="flex flex-col justify-between w-11/12 gap-2 p-2 mx-auto mt-3 sm:items-end sm:flex-row md:px-5">
+      <div className="flex flex-col justify-between w-11/12 gap-2 px-2 mx-auto my-3 sm:items-end sm:flex-row max-w-7xl">
         <div className="w-full mx-auto sm:w-11/12">
           <h1 className="font-bold sm:text-xl">
             {steps?.[0]?.sequences?.name || "Sequence"}
@@ -123,7 +124,7 @@ export const StepsPage = () => {
         </div>
       </div>
 
-      <Separator className="w-11/12 mx-auto mb-6 " />
+      <Separator className="w-11/12 mx-auto mb-6 max-w-7xl" />
 
       <div className="flex flex-col max-w-3xl p-2 mx-auto gap-9">
         {steps &&
@@ -172,21 +173,22 @@ export const StepsPage = () => {
                   )}
                 </div>
 
-                <div className="relative w-full">
-                  <Image
-                    src={step.image}
-                    alt={step.title}
-                    width={"500"}
-                    height={"330"}
-                    className="object-contain w-full h-full border shadow-xl rounded-xl"
-                  />
-
-                  <div
-                    className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
-                    style={{
-                      top: `${step.y * 100}%`,
-                      left: `${step.x * 100}%`
-                    }}></div>
+                <div className="w-full">
+                  <div className="relative w-full">
+                    <Image
+                      src={step.image}
+                      alt={step.title}
+                      width={"500"}
+                      height={"330"}
+                      className="object-contain w-full h-full border shadow-xl rounded-xl"
+                    />
+                    <div
+                      className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
+                      style={{
+                        top: `${step.y * 100}%`,
+                        left: `${step.x * 100}%`
+                      }}></div>
+                  </div>
                 </div>
               </div>
             )

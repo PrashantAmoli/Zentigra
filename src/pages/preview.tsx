@@ -15,8 +15,8 @@ type SequenceType = {
   x: number
   y: number
   image: string
-  page_url: string
   title: string
+  page_url: string
   description: string
 }
 
@@ -85,7 +85,8 @@ export default function PreviewPage() {
     const sequenceData = {
       name: sequenceName,
       description: sequenceDescription,
-      created_by: userEmailAddress
+      created_by: userEmailAddress,
+      steps: sequencePreview?.length
     }
 
     console.log("Sequence Data: ", sequenceData)
@@ -115,7 +116,8 @@ export default function PreviewPage() {
         y: step.y,
         position,
         created_by: userEmailAddress,
-        sequence_id: sequenceId
+        sequence_id: sequenceId,
+        page_url: step?.page_url
       }
     })
 

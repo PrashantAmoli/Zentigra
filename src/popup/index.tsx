@@ -81,7 +81,7 @@ function IndexPopup() {
                     },
                     "*"
                   )
-                }, 1500)
+                }, 2000)
             }}
             // allow iframe to communicate with the parent window on different origin domain
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen;"
