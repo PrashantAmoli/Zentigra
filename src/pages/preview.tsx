@@ -1,5 +1,6 @@
 import { useUser } from "@clerk/clerk-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -11,9 +12,12 @@ import { Textarea } from "~components/ui/textarea"
 import { supabase } from "~supabase"
 
 type SequenceType = {
-  url: string
   x: number
   y: number
+  image: string
+  title: string
+  page_url: string
+  description: string
 }
 
 export default function PreviewPage() {
@@ -81,7 +85,8 @@ export default function PreviewPage() {
     const sequenceData = {
       name: sequenceName,
       description: sequenceDescription,
-      created_by: userEmailAddress
+      created_by: userEmailAddress,
+      steps: sequencePreview?.length
     }
 
     console.log("Sequence Data: ", sequenceData)
@@ -104,14 +109,15 @@ export default function PreviewPage() {
       const position = index + 1
 
       return {
-        title: "Step " + position,
-        description: "Some description",
-        image: step.url,
+        title: step?.title || "Step " + position,
+        description: step?.description || "Some description",
+        image: step.image,
         x: step.x,
         y: step.y,
         position,
         created_by: userEmailAddress,
-        sequence_id: sequenceId
+        sequence_id: sequenceId,
+        page_url: step?.page_url
       }
     })
 
@@ -151,47 +157,76 @@ export default function PreviewPage() {
 
           <TabsContent value="preview">
             {sequencePreview ? (
-              <div className="flex flex-col w-full max-w-3xl gap-5 mx-auto mb-10">
-                <h1 className="w-full px-2 pt-2 text-xl font-semibold">
+              <div className="flex flex-col w-full max-w-3xl gap-6 mx-auto mb-10">
+                <h1 className="w-full px-2 pt-4 text-xl font-semibold">
                   Preview Sequence: {sequencePreview.length} steps{" "}
                 </h1>
 
                 {sequencePreview.map((step: any, key) => {
                   return (
-                    <div
-                      key={key}
-                      className="p-2.5 border shadow-xl rounded-xl hover:shadow-2xl">
-                      <div className="flex gap-3 p-1 mb-2">
-                        <div className="flex items-center justify-center h-10 transition-all border-2 rounded-full shadow-lg w-11 bg-blue-400/30 hover:shadow-xl hover:scale-105">
-                          {key + 1}
+                    <>
+                      <div
+                        key={key}
+                        className="p-2.5 border shadow-xl rounded-xl hover:shadow-2xl dark-shadow">
+                        <div className="flex justify-between gap-3 p-1 mb-2">
+                          <div className="flex items-center justify-center w-12 text-lg font-bold transition-all border-4 border-double rounded-full shadow-lg dark-shadow hover:border-dashed h-11 bg-sky-200 dark:bg-slate-950 hover:shadow-xl hover:scale-105">
+                            {key + 1}
+                          </div>
+
+                          <div className="w-full">
+                            <h2 className="text-lg font-semibold ">
+                              {step.title}
+                            </h2>
+
+                            <p className="text-sm text-secondary-foreground">
+                              {step.description}
+                            </p>
+                          </div>
+
+                          {step.page_url ? (
+                            <Link href={step.page_url}>
+                              <Button
+                                className="w-full max-w-xs truncate"
+                                size="icon"
+                                variant="link">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  className="w-6 h-6"
+                                  stroke="currentColor">
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                  />
+                                </svg>
+                              </Button>
+                            </Link>
+                          ) : (
+                            <></>
+                          )}
                         </div>
 
-                        <div className="w-full">
-                          {/* <h3 className="text-lg font-semibold ">{step.title}</h3> */}
+                        <div className="relative w-full overflow-hidden">
+                          <Image
+                            src={step.image}
+                            alt={step.image}
+                            width={"500"}
+                            height={"330"}
+                            className="object-contain w-full h-full border shadow-xl rounded-xl"
+                          />
 
-                          {/* <p className="text-sm text-secondary-foreground">
-                      {step.description}
-                    </p> */}
+                          <div
+                            className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
+                            style={{
+                              top: `${step.y * 100}%`,
+                              left: `${step.x * 100}%`
+                            }}></div>
                         </div>
                       </div>
-
-                      <div className="relative w-full">
-                        <Image
-                          src={step.url}
-                          alt={step.url}
-                          width={"440"}
-                          height={"330"}
-                          className="object-contain w-full h-full border shadow-xl rounded-xl"
-                        />
-
-                        <div
-                          className="absolute z-20 w-12 h-12 transition-all -translate-x-5 -translate-y-5 border-2 rounded-full shadow-2xl border-yellow-400/80 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
-                          style={{
-                            top: `${step.y * 100}%`,
-                            left: `${step.x * 100}%`
-                          }}></div>
-                      </div>
-                    </div>
+                    </>
                   )
                 })}
               </div>

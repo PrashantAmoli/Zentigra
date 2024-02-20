@@ -1,11 +1,5 @@
 import { useUser } from "@clerk/clerk-react"
 
-type UserData = {
-  emailAddresses: unknown[]
-  isSignedIn: boolean
-  isLoaded: boolean
-}
-
 export const Welcome = () => {
   const userData = useUser()
 

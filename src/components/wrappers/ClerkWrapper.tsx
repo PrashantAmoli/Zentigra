@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs"
 import { dark } from "@clerk/themes"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/router"
+import { Toaster } from "sonner"
 
 const publicPages = [
   "/auth/sign-in/[[...index]]",
@@ -21,10 +22,27 @@ export const ClerkWrapper = ({ children }) => {
 
   return (
     <>
+      <Toaster
+        theme={theme === "dark" ? "dark" : "light"}
+        visibleToasts={7}
+        position="bottom-center"
+        richColors
+        closeButton
+      />
+
       <ClerkProvider
         appearance={{
-          baseTheme: theme === "dark" ? dark : null
+          baseTheme: theme === "dark" ? dark : null,
+          variables: {
+            colorBackground: theme === "light" ? "white" : "#101010",
+            borderRadius: "0.3"
+          }
         }}
+        signInUrl="/auth/sign-in"
+        signUpUrl="/auth/sign-up"
+        afterSignInUrl="/"
+        afterSignUpUrl="/"
+        navigate={(to) => router.push(to)}
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
         {isPublicPage ? (
           <>{children}</>
