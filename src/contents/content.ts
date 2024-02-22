@@ -1,4 +1,6 @@
 import * as htmlToImage from "html-to-image"
+import screenshot from 'screenshot-desktop'
+
 
 export {}
 
@@ -110,43 +112,109 @@ document.addEventListener("mousedown", function (event) {
 
   const screenshotTarget = document.body
 
-  htmlToImage
-    .toCanvas(screenshotTarget, {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      canvasWidth: window.innerWidth,
-      canvasHeight: window.innerHeight
-    })
-    .then(function (canvas) {
-      const base64image = canvas.toDataURL("image/png")
-      console.log("image: ", { image: base64image })
+//   htmlToImage
+//     .toCanvas(screenshotTarget, {
+//       width: window.innerWidth,
+//       height: window.innerHeight,
+//       canvasWidth: window.innerWidth,
+//       canvasHeight: window.innerHeight
+//     })
+//     .then(function (canvas) {
+//       const base64image = canvas.toDataURL("image/png")
+//       console.log("image: ", { image: base64image })
 
-      chrome.storage.local.get(["image"]).then((result) => {
-        // console.log("Value currently is " + result["image"])
-        let imageString = result["image"]
+//       chrome.storage.local.get(["image"]).then((result) => {
+//         // console.log("Value currently is " + result["image"])
+//         let imageString = result["image"]
 
-        // console.log("this is the imageString: ", imageString)
-        if (imageString == null) {
-          imageString = "[]"
-        }
+//         // console.log("this is the imageString: ", imageString)
+//         if (imageString == null) {
+//           imageString = "[]"
+//         }
 
-        let imageArray = JSON.parse(imageString)
-        imageArray.push({
-          image: base64image,
-          x,
-          y,
-          page_url: window.location.href,
-          title,
-          description
-        })
-        imageString = JSON.stringify(imageArray)
-        console.log("imageArray: ", imageArray.length, imageArray)
+//         let imageArray = JSON.parse(imageString)
+//         imageArray.push({
+//           image: base64image,
+//           x,
+//           y,
+//           page_url: window.location.href,
+//           title,
+//           description
+//         })
+//         imageString = JSON.stringify(imageArray)
+//         console.log("imageArray: ", imageArray.length, imageArray)
 
-        chrome.storage.local.set({ image: imageString }).then(() => {
-          console.log("Value is set")
-        })
-      })
-    })
+//         chrome.storage.local.set({ image: imageString }).then(() => {
+//           console.log("Value is set")
+//         })
+//       })
+//     })
+
+
+// screenshot().then((canvas) => {
+//   const base64image = canvas.toDataURL("image/png")
+//       console.log("image: ", { image: base64image })
+
+//       chrome.storage.local.get(["image"]).then((result) => {
+//         // console.log("Value currently is " + result["image"])
+//         let imageString = result["image"]
+
+//         // console.log("this is the imageString: ", imageString)
+//         if (imageString == null) {
+//           imageString = "[]"
+//         }
+
+//         let imageArray = JSON.parse(imageString)
+//         imageArray.push({
+//           image: base64image,
+//           x,
+//           y,
+//           page_url: window.location.href,
+//           title,
+//           description
+//         })
+//         imageString = JSON.stringify(imageArray)
+//         console.log("imageArray: ", imageArray.length, imageArray)
+
+//         chrome.storage.local.set({ image: imageString }).then(() => {
+//           console.log("Value is set")
+//         })
+//       })
+// }).catch((err) => {
+//   console.log('got this error while capturing the screenshot: ', err, process.platform)
+// })
+
+    const body = document.body;
+    const width = Math.max(body.scrollWidth, body.offsetWidth);
+    const height = Math.max(body.scrollHeight, body.offsetHeight);
+
+    // Create a canvas element with the same dimensions
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    // Get the 2D rendering context
+    const context = canvas.getContext('2d');
+
+    // chrome.tabs.captureVisibleTab(null, { format: 'png' }, function(dataUrl) {
+    //   const image = new Image();
+    //   image.onload = function() {
+    //     // Draw the captured screenshot onto the canvas
+    //     context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    //     console.log('Visible webpage drawn onto canvas.');
+    //   };
+    //   image.src = dataUrl;
+    // });
+
+    console.log('this is the document: ')
+    chrome.runtime.sendMessage({
+                x,
+                y,
+                page_url: window.location.href,
+                title,
+                description
+              });
+
 })
 
 // window.onmessage = (event) => {

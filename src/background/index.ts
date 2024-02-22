@@ -39,6 +39,36 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // })
       // Send the message to the preview page
     }, 5000)
+  } else if ( message.title ){
+
+    let { x, y, page_url, title, description } = message;
+
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, function(dataUrl) {
+      console.log('this is the image: ', dataUrl)
+
+      chrome.storage.local.get(["image"]).then((result) => {
+        let imageString = result["image"]
+
+        if (imageString == null) {
+          imageString = "[]"
+        }
+
+        let imageArray = JSON.parse(imageString)
+        imageArray.push({
+          image: dataUrl,
+          x,
+          y,
+          page_url,
+          title,
+          description
+        })
+        imageString = JSON.stringify(imageArray)
+
+        chrome.storage.local.set({ image: imageString }).then(() => {
+          console.log("Value is set")
+        })
+      })
+    });
   }
 })
 
