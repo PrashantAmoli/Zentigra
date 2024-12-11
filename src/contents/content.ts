@@ -4,6 +4,8 @@ export {}
 
 let recordingState = "stop"
 
+console.log("Zentigra: cs is running")
+
 const sendSequenceToPreview = async () => {
   console.log("Creating sequence to preview")
   let sequenceData = []
@@ -42,9 +44,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // if (message.data === "stop" && message.data !== recordingState)
     //   sendSequenceToPreview()
 
+    if (message.data === "start") injectStopButton()
+
     if (message.data !== recordingState) {
       // console.log("BG=>CS on Tab switch: ", message)
-
       recordingState = message.data
     }
   } else if (message.action === "backgroundToPreview") {
@@ -59,11 +62,29 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 })
 
-document.addEventListener("mousedown", function (event) {
-  const x = event.clientX / window.innerWidth
-  const y = event.clientY / window.innerHeight
+document.body.addEventListener("mousedown", (event) => {
+  console.log("mousedown event: ", event)
+  chrome.runtime.sendMessage(
+    {
+      action: "CAPTURE"
+    },
+    (response) => {
+      console.log("Response from background: ", response)
+    }
+  )
 
   if (recordingState !== "start") return
+  htmlToImage
+    .toPng(document.body, {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      canvasWidth: window.innerWidth,
+      canvasHeight: window.innerHeight,
+      quality: 0.5
+    })
+    .then(function (dataUrl) {
+      console.log(dataUrl)
+    })
 
   const clickedElement = event.target as HTMLElement
   let title = ""
@@ -108,6 +129,9 @@ document.addEventListener("mousedown", function (event) {
 
   injectStopButton()
 
+  const x = event.clientX / window.innerWidth
+  const y = event.clientY / window.innerHeight
+
   const screenshotTarget = document.body
 
   htmlToImage
@@ -149,16 +173,20 @@ document.addEventListener("mousedown", function (event) {
     })
 })
 
-// window.onmessage = (event) => {
-//   console.log("onmessage in CS: ", event.data)
-
-//   if (event.data.command === "received-sequence") {
-//     console.log("Next=>CS: ", event.data)
-//   }
-// }
-
 const injectStopButton = () => {
-  if (document.getElementById("zentigra-stop-button")) return
+  if (
+    document.getElementById("zentigra-stop-button") &&
+    recordingState === "start"
+  )
+    return
+  else if (
+    document.getElementById("zentigra-stop-button") &&
+    recordingState === "stop"
+  ) {
+    document.getElementById("zentigra-stop-button").remove()
+    return
+  }
+
   console.log("Injecting stop button")
   const stopButton = document.createElement("button")
   stopButton.id = "zentigra-stop-button"
@@ -181,6 +209,8 @@ const injectStopButton = () => {
   stopButton.style.cursor = "pointer"
   stopButton.style.transition = "transform 0.2s"
   stopButton.style.transform = "scale(1)"
+  stopButton.style.minWidth = "24px"
+  stopButton.style.minHeight = "24px"
   // scale on hover
 
   document.body.appendChild(stopButton)
