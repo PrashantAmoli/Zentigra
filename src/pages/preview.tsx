@@ -4,12 +4,19 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { Navigation, Pagination, Thumbs } from "swiper/modules"
+import { Swiper, SwiperSlide } from "swiper/react"
 
 import { Button } from "~/components/ui/button"
 import { Input } from "~components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~components/ui/tabs"
 import { Textarea } from "~components/ui/textarea"
 import { supabase } from "~supabase"
+
+// Import Swiper styles
+import "swiper/css"
+import "swiper/css/pagination"
+import "swiper/css/navigation"
 
 type SequenceType = {
   x: number
@@ -157,12 +164,100 @@ export default function PreviewPage() {
 
           <TabsContent value="preview">
             {sequencePreview ? (
-              <div className="flex flex-col w-full max-w-3xl gap-6 mx-auto mb-10">
+              <div className="flex flex-col w-full max-w-4xl gap-6 mx-auto mb-10">
                 <h1 className="w-full px-2 pt-4 text-xl font-semibold">
                   Preview Sequence: {sequencePreview.length} steps{" "}
                 </h1>
 
-                {sequencePreview.map((step: any, key) => {
+                <div className="flex flex-col w-full p-2 mx-auto gap-9">
+                  <Swiper
+                    modules={[Pagination, Navigation]}
+                    navigation={true}
+                    grabCursor={true}
+                    pagination={{
+                      type: "progressbar",
+                      clickable: true,
+                      dynamicBullets: true
+                    }}
+                    // thumbs={{ swiper: thumbsSwiper }}
+                    watchSlidesProgress
+                    spaceBetween={10}
+                    slidesPerView={1.0}
+                    centeredSlides={true}
+                    // centeredSlidesBounds={true}
+                    onSlideChange={() => console.log("slide change")}
+                    // onSwiper={setThumbsSwiper}
+                    className="flex flex-col max-w-4xl p-4 mx-auto border shadow-inner rounded-xl mySwiper gap-9">
+                    {sequencePreview.map((step: any, key: number) => {
+                      return (
+                        <SwiperSlide key={key} id={step.title} className="">
+                          <div className="p-2.5 m-1 sm:m-4 border shadow-xl rounded-xl hover:shadow-2xl dark-shadow">
+                            <div className="flex justify-between gap-3 p-1 mb-2">
+                              <div className="flex items-center justify-center w-12 text-lg font-bold transition-all border-4 border-double rounded-full shadow-lg dark-shadow hover:border-dashed h-11 bg-accent dark:bg-slate-950 hover:shadow-xl hover:scale-105 min-w-12">
+                                {key + 1}
+                              </div>
+
+                              <div className="w-full overflow-hidden">
+                                <h2 className="text-lg font-semibold truncate">
+                                  {step.title}
+                                </h2>
+
+                                <p className="text-sm truncate text-secondary-foreground">
+                                  {step.description}
+                                </p>
+                              </div>
+
+                              {step?.page_url ? (
+                                <Link href={step?.page_url}>
+                                  <Button
+                                    className="w-full max-w-xs truncate"
+                                    size="icon"
+                                    variant="link">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke-width="1.5"
+                                      className="w-6 h-6"
+                                      stroke="currentColor">
+                                      <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                      />
+                                    </svg>
+                                  </Button>
+                                </Link>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
+
+                            <div className="w-full">
+                              <div className="relative w-full">
+                                <Image
+                                  src={step.image}
+                                  alt={step.title}
+                                  width={"500"}
+                                  height={"330"}
+                                  className="object-contain w-full h-full border shadow-xl rounded-xl"
+                                />
+                                <div
+                                  className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
+                                  style={{
+                                    top: `${step.y * 100}%`,
+                                    left: `${step.x * 100}%`
+                                  }}></div>
+                              </div>
+                            </div>
+                          </div>
+                        </SwiperSlide>
+                      )
+                    })}
+                  </Swiper>
+                </div>
+
+                {/* {sequencePreview.map((step: any, key) => {
                   return (
                     <>
                       <div
@@ -228,7 +323,7 @@ export default function PreviewPage() {
                       </div>
                     </>
                   )
-                })}
+                })} */}
               </div>
             ) : (
               <div className="animate-bounce">

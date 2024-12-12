@@ -39,6 +39,25 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // })
       // Send the message to the preview page
     }, 5000)
+  } else if (message.action === "CAPTURE") {
+    // Capture the current tab
+    chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
+      // Log the data URL of the captured tab
+      console.log("Captured tab:", dataUrl)
+
+      sendResponse({ data: dataUrl })
+
+      if (chrome.runtime.lastError) {
+        // Handle any error that occurred while capturing the tab
+        console.error(chrome.runtime.lastError.message)
+      }
+
+      // Save the data URL to the local storage
+      // chrome.storage.local.set({ image: dataUrl }, () => {
+      //   // Log the result of saving the data URL
+      //   console.log("Image saved to local storage")
+      // })
+    })
   }
 })
 
@@ -68,9 +87,31 @@ chrome.runtime.onInstalled.addListener(function (details) {
   console.log("Zentigra Installed ", details)
   if (details.reason === "install") {
     chrome.tabs.create({
-      url: frontendUrl || "https://zentigra.vercel.app"
+      url: frontendUrl || "http://localhost:1947"
     })
   } else if (details.reason === "update") {
+    chrome.runtime.restart()
+
+    chrome.tabs.query({}, (tabDetails) => {
+      //sends messages to all active tabs for now
+      console.log("tabDetails: ", tabDetails)
+
+      tabDetails.forEach((tab) => {
+        chrome.scripting.executeScript(
+          {
+            target: {
+              tabId: tab.id
+            },
+            world: "MAIN", // MAIN in order to access the window object
+            files: ["/src/contents/content.ts"]
+          },
+          () => {
+            console.log("Background script got callback after injection")
+          }
+        )
+      })
+    })
+
     chrome.tabs.query({ active: false }, (tabDetails) => {
       //sends messages to all active tabs for now
       tabDetails.forEach((tab) => {
