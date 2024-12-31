@@ -36,6 +36,7 @@
     "geist": "^1.2.2",
     "html-screen-capture-js": "^2.0.7",
     "html-to-image": "^1.11.11",
+    "jsdom": "^25.0.1",
     "next": "14.0.2",
     "next-themes": "^0.2.1",
     "plasmo": "0.84.0",
@@ -71,12 +72,14 @@
       "storage",
       "sidePanel",
       "scripting",
+      "runtime",
       "activeTab",
       "<all_urls>",
       "tabCapture",
       "desktopCapture",
       "nativeMessaging",
-      "unlimitedStorage"
+      "unlimitedStorage",
+      "webNavigation"
     ]
   }
 }
