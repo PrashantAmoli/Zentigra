@@ -1,5 +1,3 @@
-import * as htmlToImage from "html-to-image"
-
 export {}
 
 let recordingState = "stop"
@@ -43,8 +41,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (message.action === "TAB_SWITCHED") {
     // if (message.data === "stop" && message.data !== recordingState)
     //   sendSequenceToPreview()
+    console.log("BG=>CS on Tab switch: ", message)
 
     if (message.data === "start") injectStopButton()
+    else {
+      document.getElementById("zentigra-stop-button").remove()
+    }
 
     if (message.data !== recordingState) {
       // console.log("BG=>CS on Tab switch: ", message)
@@ -62,31 +64,29 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 })
 
-document.body.addEventListener("mousedown", (event) => {
-  console.log("mousedown event: ", event)
-  chrome.runtime.sendMessage(
-    {
-      action: "CAPTURE"
-    },
-    (response) => {
-      console.log("Response from background: ", response)
-    }
-  )
+// Function to block execution for 1 second
+function delayExecution() {
+  const delay = 1000 // 1 second
+  const start = Date.now()
+  while (Date.now() - start < delay) {
+    // Busy-wait to block execution
+  }
+  console.log("Delayed function execution completed.")
+}
 
+document.body.addEventListener("mousedown", (event) => {
   if (recordingState !== "start") return
-  htmlToImage
-    .toPng(document.body, {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      canvasWidth: window.innerWidth,
-      canvasHeight: window.innerHeight,
-      quality: 0.5
-    })
-    .then(function (dataUrl) {
-      console.log(dataUrl)
-    })
+
+  injectStopButton()
 
   const clickedElement = event.target as HTMLElement
+
+  if (
+    clickedElement.id === "zentigra-stop-button" ||
+    clickedElement.id === "zentigra-stop-button-svg"
+  )
+    return
+
   let title = ""
 
   // get content of meta description from the meta tag in the head
@@ -127,50 +127,60 @@ document.body.addEventListener("mousedown", (event) => {
 
   console.log(title, description)
 
-  injectStopButton()
-
   const x = event.clientX / window.innerWidth
   const y = event.clientY / window.innerHeight
 
-  const screenshotTarget = document.body
+  chrome.runtime.sendMessage({
+    action: "ADD_STEP",
+    command: "add",
+    data: {
+      x,
+      y,
+      title,
+      description,
+      page_url: window.location.href
+    }
+  })
 
-  htmlToImage
-    .toCanvas(screenshotTarget, {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      canvasWidth: window.innerWidth,
-      canvasHeight: window.innerHeight
-    })
-    .then(function (canvas) {
-      const base64image = canvas.toDataURL("image/png")
-      console.log("image: ", { image: base64image })
+  delayExecution()
 
-      chrome.storage.local.get(["image"]).then((result) => {
-        // console.log("Value currently is " + result["image"])
-        let imageString = result["image"]
+  // htmlToImage
+  //   .toCanvas(screenshotTarget, {
+  //     width: window.innerWidth,
+  //     height: window.innerHeight,
+  //     canvasWidth: window.innerWidth,
+  //     canvasHeight: window.innerHeight
+  //   })
+  //   .then(function (canvas) {
+  //     const base64image = canvas.toDataURL("image/png")
+  //     console.log("image: ", { image: base64image })
 
-        // console.log("this is the imageString: ", imageString)
-        if (imageString == null) {
-          imageString = "[]"
-        }
+  //     chrome.storage.local.get(["image"]).then((result) => {
+  //       // console.log("Value currently is " + result["image"])
+  //       let imageString = result["image"]
 
-        let imageArray = JSON.parse(imageString)
-        imageArray.push({
-          image: base64image,
-          x,
-          y,
-          page_url: window.location.href,
-          title,
-          description
-        })
-        imageString = JSON.stringify(imageArray)
-        console.log("imageArray: ", imageArray.length, imageArray)
+  //       // console.log("this is the imageString: ", imageString)
+  //       if (imageString == null) {
+  //         imageString = "[]"
+  //       }
 
-        chrome.storage.local.set({ image: imageString }).then(() => {
-          console.log("Value is set")
-        })
-      })
-    })
+  //       let imageArray = JSON.parse(imageString)
+  //       imageArray.push({
+  //         image: base64image,
+  //         x,
+  //         y,
+  //         page_url: window.location.href,
+  //         title,
+  //         description
+  //       })
+  //       imageString = JSON.stringify(imageArray)
+  //       console.log("imageArray: ", imageArray.length, imageArray)
+
+  //       chrome.storage.local.set({ image: imageString }).then(() => {
+  //         console.log("Value is set")
+  //       })
+  //     })
+  //   })
 })
 
 const injectStopButton = () => {
@@ -192,16 +202,17 @@ const injectStopButton = () => {
   stopButton.id = "zentigra-stop-button"
   stopButton.innerText = "Stop"
   stopButton.innerHTML = `
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" id="zentigra-stop-button-svg" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
   <path stroke-linecap="round" stroke-linejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z" />
-</svg>
-`
+  </svg>
+  `
   stopButton.style.position = "fixed"
   stopButton.style.bottom = "100px"
   stopButton.style.right = "10px"
   stopButton.style.zIndex = "9999"
-  stopButton.style.backgroundColor = "white"
+  stopButton.style.backgroundColor = "red"
+  stopButton.style.color = "white"
   stopButton.style.padding = "6px"
   stopButton.style.border = "none"
   stopButton.style.borderRadius = "50%"
@@ -228,7 +239,7 @@ const injectStopButton = () => {
       setTimeout(() => {
         sendSequenceToPreview()
         stopButton.remove()
-      }, 2000)
+      }, 1500)
     })
   }, 3000)
 }

@@ -2,6 +2,7 @@ import { SignInButton, useAuth, UserButton } from "@clerk/clerk-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { useEffect } from "react"
 
 import { Button } from "~components/ui/button"
 import {
@@ -11,8 +12,6 @@ import {
   SelectTrigger,
   SelectValue
 } from "~components/ui/select"
-
-import AlertPopup from "./elements/AlertPopup"
 
 const HideNavbar = [
   "/profile",
@@ -25,6 +24,10 @@ export const Navbar = () => {
   const { isSignedIn } = useAuth()
 
   const { setTheme, theme } = useTheme()
+
+  useEffect(() => {
+    setTheme("light")
+  }, [])
 
   if (HideNavbar.includes(router.pathname)) return <></>
 
@@ -48,7 +51,6 @@ export const Navbar = () => {
               <SelectContent>
                 <SelectItem value="dark">Dark</SelectItem>
                 <SelectItem value="light">Light</SelectItem>
-                {/* <SelectItem value="system">System</SelectItem> */}
               </SelectContent>
             </Select>
 

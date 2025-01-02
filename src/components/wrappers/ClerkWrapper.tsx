@@ -23,7 +23,7 @@ export const ClerkWrapper = ({ children }) => {
   return (
     <>
       <Toaster
-        theme={theme === "dark" ? "dark" : "light"}
+        // theme={theme === "dark" ? "dark" : "light"}
         visibleToasts={7}
         position="bottom-center"
         richColors
@@ -32,9 +32,9 @@ export const ClerkWrapper = ({ children }) => {
 
       <ClerkProvider
         appearance={{
-          baseTheme: theme === "dark" ? dark : null,
+          // baseTheme: theme === "dark" ? dark : null,
           variables: {
-            colorBackground: theme === "light" ? "white" : "#101010",
+            // colorBackground: theme === "light" ? "white" : "#101010",
             borderRadius: "0.3"
           }
         }}
