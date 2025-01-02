@@ -1,6 +1,3 @@
-import * as htmlToImage from "html-to-image"
-import { JSDOM } from "jsdom"
-
 // export {}
 
 let RecordingState = "stop"
@@ -14,14 +11,14 @@ console.log(
 
 const captureVisibleTab = async (message) => {
   return new Promise((resolve, reject) => {
-    chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-      // Log the data URL of the captured tab
+    chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
       if (!dataUrl) {
         console.log("Base64 Data URL not created")
       }
 
       resolve(dataUrl)
 
+      // Log the data URL of the captured tab
       console.log("Captured tab:", dataUrl)
 
       const step = { ...message.data, image: dataUrl }
@@ -91,10 +88,10 @@ chrome.runtime.onMessage.addListener(
         // Send the message to the preview page
       }, 5000)
     } else if (message.action === "ADD_STEP") {
-      // console.log("Step data from content script: ", message.data)
-      // const dom = new JSDOM(message.data.target_body)
-      // const document = dom.window.document
-      // console.log("document: ", document)
+      console.log("Sender", sender)
+      chrome.tabs.query({ active: true }, (tabDetails) => {
+        console.log("Tabs: ", tabDetails)
+      })
 
       // Capture the current tab
       await captureVisibleTab(message)

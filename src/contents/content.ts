@@ -44,6 +44,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log("BG=>CS on Tab switch: ", message)
 
     if (message.data === "start") injectStopButton()
+    else {
+      document.getElementById("zentigra-stop-button").remove()
+    }
 
     if (message.data !== recordingState) {
       // console.log("BG=>CS on Tab switch: ", message)
@@ -61,9 +64,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 })
 
-// Function to block execution for 3 seconds
+// Function to block execution for 1 second
 function delayExecution() {
-  const delay = 3000 // 3 seconds
+  const delay = 1000 // 1 second
   const start = Date.now()
   while (Date.now() - start < delay) {
     // Busy-wait to block execution
@@ -127,11 +130,6 @@ document.body.addEventListener("mousedown", (event) => {
   const x = event.clientX / window.innerWidth
   const y = event.clientY / window.innerHeight
 
-  const screenshotTarget = document.body
-
-  console.log("document.body", document.body)
-  console.log("document.body.outerHTML", document.body.outerHTML)
-
   chrome.runtime.sendMessage({
     action: "ADD_STEP",
     command: "add",
@@ -140,8 +138,7 @@ document.body.addEventListener("mousedown", (event) => {
       y,
       title,
       description,
-      page_url: window.location.href,
-      target_body: document.body.outerHTML
+      page_url: window.location.href
     }
   })
 
@@ -242,7 +239,7 @@ const injectStopButton = () => {
       setTimeout(() => {
         sendSequenceToPreview()
         stopButton.remove()
-      }, 2000)
+      }, 1500)
     })
   }, 3000)
 }

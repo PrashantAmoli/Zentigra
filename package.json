@@ -65,7 +65,8 @@
   "manifest": {
     "host_permissions": [
       "http://*/*",
-      "https://*/*"
+      "https://*/*",
+      "<all_urls>"
     ],
     "permissions": [
       "tabs",
@@ -74,7 +75,6 @@
       "scripting",
       "runtime",
       "activeTab",
-      "<all_urls>",
       "tabCapture",
       "desktopCapture",
       "nativeMessaging",

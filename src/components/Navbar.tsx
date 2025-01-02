@@ -13,8 +13,6 @@ import {
   SelectValue
 } from "~components/ui/select"
 
-import AlertPopup from "./elements/AlertPopup"
-
 const HideNavbar = [
   "/profile",
   "/auth/sign-in/[[...index]]",

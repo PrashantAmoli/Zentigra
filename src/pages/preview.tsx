@@ -158,7 +158,7 @@ export default function PreviewPage() {
               Preview
             </TabsTrigger>
             <TabsTrigger className="w-full" value="options">
-              Options
+              Save
             </TabsTrigger>
           </TabsList>
 
