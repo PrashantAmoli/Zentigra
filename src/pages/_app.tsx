@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes"
 import { Navbar } from "~components/Navbar"
 import ClerkWrapper from "~components/wrappers/ClerkWrapper"
 
+import "intro.js/introjs.css"
 import "~styles/globals.css"
 
 export default function App({ Component, pageProps }) {
