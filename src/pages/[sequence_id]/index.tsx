@@ -28,11 +28,6 @@ export const StepsPage = () => {
 
   const [steps, setSteps] = useState<any>([])
 
-  // store thumbs swiper instance
-  // const [thumbsSwiper, setThumbsSwiper] = useState(null)
-
-  const swiper = useSwiper()
-
   const fetchStepsFromSequenceId = async () => {
     const { data: stepsData, error: stepsError } = await supabase
       .from("steps")
