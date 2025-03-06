@@ -4,10 +4,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import { Tooltip } from "react-tooltip"
 // import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom"
 import { toast } from "sonner"
 import { Autoplay, Navigation, Pagination, Thumbs } from "swiper/modules"
-import { Swiper, SwiperSlide } from "swiper/react"
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react"
 
 import { Button } from "~components/ui/button"
 import { Separator } from "~components/ui/separator"
@@ -18,6 +19,9 @@ import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 
+import introJs from "intro.js"
+import { Steps } from "intro.js-react"
+
 export const StepsPage = () => {
   const router = useRouter()
   const { sequence_id } = router.query
@@ -25,7 +29,9 @@ export const StepsPage = () => {
   const [steps, setSteps] = useState<any>([])
 
   // store thumbs swiper instance
-  const [thumbsSwiper, setThumbsSwiper] = useState(null)
+  // const [thumbsSwiper, setThumbsSwiper] = useState(null)
+
+  const swiper = useSwiper()
 
   const fetchStepsFromSequenceId = async () => {
     const { data: stepsData, error: stepsError } = await supabase
@@ -41,6 +47,10 @@ export const StepsPage = () => {
     if (stepsError) console.log(stepsError)
 
     setSteps(stepsData)
+
+    setTimeout(() => {
+      // introJs(".sequence").start()
+    }, 1000)
 
     return stepsData
   }
@@ -77,6 +87,8 @@ export const StepsPage = () => {
       success: "Steps loaded",
       error: "Failed to load steps"
     })
+
+    console.log("swiper", Swiper)
   }, [sequence_id])
 
   return (
@@ -146,10 +158,10 @@ export const StepsPage = () => {
             clickable: true,
             dynamicBullets: true
           }}
-          autoplay={{
-            delay: 3000,
-            disableOnInteraction: true
-          }}
+          // autoplay={{
+          //   delay: 3000,
+          //   disableOnInteraction: true
+          // }}
           // thumbs={{ swiper: thumbsSwiper }}
           watchSlidesProgress
           spaceBetween={10}
@@ -158,7 +170,7 @@ export const StepsPage = () => {
           // centeredSlidesBounds={true}
           onSlideChange={() => console.log("slide change")}
           // onSwiper={setThumbsSwiper}
-          className="flex flex-col max-w-4xl p-4 mx-auto border shadow-inner rounded-xl mySwiper gap-9">
+          className="flex flex-col max-w-4xl p-4 mx-auto border shadow-inner sequence rounded-xl mySwiper gap-9">
           {steps &&
             steps.map((step: any, key) => {
               return (
@@ -170,11 +182,11 @@ export const StepsPage = () => {
                       </div>
 
                       <div className="w-full overflow-hidden">
-                        <h2 className="text-lg font-semibold truncate">
+                        <h2 className="text-lg font-semibold line-clamp-2">
                           {step.title}
                         </h2>
 
-                        <p className="text-sm truncate text-secondary-foreground">
+                        <p className="text-sm line-clamp-6 text-secondary-foreground">
                           {step.description}
                         </p>
                       </div>
@@ -214,12 +226,8 @@ export const StepsPage = () => {
                           height={"330"}
                           className="object-contain w-full h-full border shadow-xl rounded-xl"
                         />
-                        <div
-                          className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
-                          style={{
-                            top: `${step.y * 100}%`,
-                            left: `${step.x * 100}%`
-                          }}></div>
+
+                        <ClickHighlight step={step} />
                       </div>
                     </div>
                   </div>
@@ -227,16 +235,45 @@ export const StepsPage = () => {
               )
             })}
         </Swiper>
-
-        {/* <Swiper
-          modules={[Thumbs]}
-          watchSlidesProgress
-          onSwiper={setThumbsSwiper}>
-       
-        </Swiper> */}
       </div>
 
       <div className="w-full h-10"></div>
+    </>
+  )
+}
+
+export function ClickHighlight({ step }) {
+  const swiper = useSwiper()
+
+  return (
+    <>
+      <a
+        onClick={() => swiper.slideNext()}
+        id={`anchor-${step.position}`}
+        className="absolute z-20 w-8 h-8 duration-1000 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl cursor-pointer hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-300/95 bg-green-400/20 animate-pulse hover:animate-none hover:scale-105"
+        style={{
+          top: `${step.y * 100}%`,
+          left: `${step.x * 100}%`
+        }}
+        data-tooltip-class={"relative"}
+        data-highlight-class={"relative"}
+        data-position={"auto"}
+        data-intro={`Click ${step.title}: ${step.description}`}
+        data-step={step.position}></a>
+
+      <Tooltip
+        anchorSelect={`#anchor-${step.position}`}
+        clickable
+        className="rounded-lg shadow-lg shadow-yellow-500/35"
+        delayHide={500}>
+        <div className="h-auto max-w-xs p-1">
+          <span className="font-semibold">{step.title}</span>
+
+          <p className="overflow-auto text-sm line-clamp-3">
+            {step.description}
+          </p>
+        </div>
+      </Tooltip>
     </>
   )
 }

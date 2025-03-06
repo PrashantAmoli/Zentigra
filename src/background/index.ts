@@ -1,4 +1,4 @@
-// export {}
+export {}
 
 let RecordingState = "stop"
 
@@ -210,18 +210,28 @@ chrome.runtime.onInstalled.addListener(function (details) {
       console.log("tabDetails: ", tabDetails)
 
       tabDetails.forEach((tab) => {
-        chrome.scripting.executeScript(
-          {
+        chrome.scripting
+          .executeScript({
             target: {
-              tabId: tab.id
+              tabId: tab.id,
+              allFrames: true
             },
-            world: "MAIN", // MAIN in order to access the window object
-            files: ["/src/contents/content.ts"]
-          },
-          () => {
-            console.log("Background script got callback after injection")
-          }
-        )
+            world: "MAIN",
+            func: () => {
+              // files: ["/contents/content"]
+              if (typeof window !== undefined) {
+                window.location.reload()
+                console.log("Reload triggered!")
+              }
+              console.log("Func injected successfully from BG into CS")
+            }
+          })
+          .then((res) => {
+            console.log("Script injected")
+          })
+          .catch((err) => {
+            console.error("Injection Err: ", err)
+          })
       })
     })
 
