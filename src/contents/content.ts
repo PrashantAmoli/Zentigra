@@ -174,7 +174,9 @@ document.body.addEventListener("mousedown", (event) => {
       title = `Clicked label: ${clickedElement.textContent}`
       break
     default:
-      title = `Clicked ${clickedElement.tagName.toLowerCase()}`
+      title = `Clicked ${clickedElement.tagName.toLowerCase()}: ${
+        clickedElement.textContent
+      }`
       break
   }
 

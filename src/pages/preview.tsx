@@ -5,7 +5,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Navigation, Pagination, Thumbs } from "swiper/modules"
-import { Swiper, SwiperSlide } from "swiper/react"
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react"
 
 import { Button } from "~/components/ui/button"
 import { Input } from "~components/ui/input"
@@ -17,6 +17,8 @@ import { supabase } from "~supabase"
 import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
+
+import { Tooltip } from "react-tooltip"
 
 type SequenceType = {
   x: number
@@ -242,12 +244,14 @@ export default function PreviewPage() {
                                   height={"330"}
                                   className="object-contain w-full h-full border shadow-xl rounded-xl"
                                 />
-                                <div
+                                {/* <div
                                   className="absolute z-20 w-8 h-8 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-400/85 bg-green-400/25 animate-pulse hover:animate-none hover:scale-105"
                                   style={{
                                     top: `${step.y * 100}%`,
                                     left: `${step.x * 100}%`
-                                  }}></div>
+                                  }}></div> */}
+
+                                <ClickHighlight step={step} />
                               </div>
                             </div>
                           </div>
@@ -379,6 +383,42 @@ export default function PreviewPage() {
           </TabsContent>
         </Tabs>
       </main>
+    </>
+  )
+}
+
+export function ClickHighlight({ step }) {
+  const swiper = useSwiper()
+
+  return (
+    <>
+      <a
+        onClick={() => swiper.slideNext()}
+        id={`anchor-${step.position}`}
+        className="absolute z-20 w-8 h-8 duration-1000 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl cursor-pointer hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-300/95 bg-green-400/20 animate-pulse hover:animate-none hover:scale-105"
+        style={{
+          top: `${step.y * 100}%`,
+          left: `${step.x * 100}%`
+        }}
+        data-tooltip-class={"relative"}
+        data-highlight-class={"relative"}
+        data-position={"auto"}
+        data-intro={`Click ${step.title}: ${step.description}`}
+        data-step={step.position}></a>
+
+      <Tooltip
+        anchorSelect={`#anchor-${step.position}`}
+        clickable
+        className="rounded-lg shadow-lg shadow-yellow-500/35"
+        delayHide={500}>
+        <div className="h-auto max-w-xs p-1">
+          <span className="font-semibold">{step.title}</span>
+
+          <p className="overflow-auto text-sm line-clamp-3">
+            {step.description}
+          </p>
+        </div>
+      </Tooltip>
     </>
   )
 }
