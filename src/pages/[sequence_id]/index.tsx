@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import { CiEdit } from "react-icons/ci"
 import { Tooltip } from "react-tooltip"
 // import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom"
 import { toast } from "sonner"
@@ -21,6 +22,18 @@ import "swiper/css/navigation"
 
 import introJs from "intro.js"
 import { Steps } from "intro.js-react"
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "~components/ui/dialog"
+import { Textarea } from "~components/ui/textarea"
 
 export const StepsPage = () => {
   const router = useRouter()
@@ -41,13 +54,15 @@ export const StepsPage = () => {
 
     if (stepsError) console.log(stepsError)
 
-    setSteps(stepsData)
+    const sortedStepsData = stepsData.sort((a, b) => a.position - b.position)
+
+    setSteps(sortedStepsData)
 
     setTimeout(() => {
       // introJs(".sequence").start()
     }, 1000)
 
-    return stepsData
+    return sortedStepsData
   }
 
   const deleteSequence = async () => {
@@ -165,7 +180,7 @@ export const StepsPage = () => {
           // centeredSlidesBounds={true}
           onSlideChange={() => console.log("slide change")}
           // onSwiper={setThumbsSwiper}
-          className="flex flex-col max-w-4xl p-4 mx-auto border shadow-inner sequence rounded-xl mySwiper gap-9">
+          className="flex flex-col max-w-4xl p-4 mx-auto border-0 shadow-inner sequence rounded-xl mySwiper gap-9">
           {steps &&
             steps.map((step: any, key) => {
               return (
@@ -187,26 +202,30 @@ export const StepsPage = () => {
                       </div>
 
                       {step?.page_url ? (
-                        <Link href={step?.page_url}>
-                          <Button
-                            className="w-full max-w-xs truncate"
-                            size="icon"
-                            variant="link">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              className="w-6 h-6"
-                              stroke="currentColor">
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                              />
-                            </svg>
-                          </Button>
-                        </Link>
+                        <div className="flex flex-col items-center justify-between">
+                          <Link href={step?.page_url}>
+                            <Button
+                              className="w-full max-w-xs truncate"
+                              size="icon"
+                              variant="link">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                className="w-6 h-6"
+                                stroke="currentColor">
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                />
+                              </svg>
+                            </Button>
+                          </Link>
+
+                          <EditDialog step={step} />
+                        </div>
                       ) : (
                         <></>
                       )}
@@ -269,6 +288,71 @@ export function ClickHighlight({ step }) {
           </p>
         </div>
       </Tooltip>
+    </>
+  )
+}
+
+export const EditDialog = ({ step }) => {
+  const [title, setTitle] = useState(step.title)
+  const [description, setDescription] = useState(step.description)
+
+  const editStepWithId = async () => {
+    const { data, error } = await supabase
+      .from("steps")
+      .update({ title, description })
+      .eq("id", step.id)
+
+    if (error) console.log(error)
+    else {
+      toast.success("Step updated")
+    }
+  }
+
+  return (
+    <>
+      <Dialog>
+        <DialogTrigger>
+          <CiEdit className="w-6 h-6" />
+        </DialogTrigger>
+
+        <DialogContent className="w-11/12 max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="px-2">Edit Step</DialogTitle>
+
+            <DialogDescription className="flex flex-col gap-5 px-2 py-5">
+              <Textarea
+                placeholder="Edit title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className=""
+              />
+
+              <Textarea
+                placeholder="Edit description..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className=""
+                rows={12}
+              />
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex justify-between w-full gap-2 px-2">
+            <DialogClose className="w-full">
+              <Button className="w-full" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+
+            <Button
+              className="w-full"
+              variant="default"
+              onClick={() => editStepWithId()}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
