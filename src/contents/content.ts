@@ -148,35 +148,42 @@ document.body.addEventListener("mousedown", (event) => {
       .querySelector("meta[name='description']")
       ?.getAttribute("content") || "No description found"
 
-  const description = `On ${document.title} page 
+  let description = `On ${document.title} page 
   (${metaDescription}) `
 
   switch (clickedElement?.tagName) {
     case "BUTTON":
-      title = `Clicked button: ${clickedElement.textContent}`
+      title = `Click ${clickedElement.textContent} button`
       break
     case "A":
       let href = clickedElement.getAttribute("href")
       if (href?.startsWith("/")) href = window.location.origin + href
 
-      title = `Clicked link: ${clickedElement.textContent} - ${href}`
+      title = `Click ${clickedElement.textContent} link - ${href}`
       break
     case "SELECT":
-      title = `Clicked select element: ${clickedElement.textContent}`
+      title = `Click ${clickedElement.textContent} select element `
       break
     case "IMG":
       let src = clickedElement.getAttribute("src")
       let alt = clickedElement.getAttribute("alt")
 
-      title = `Clicked image ${alt ? alt : ""}: ${src ? src : ""}`
+      title = `Click image ${alt ? alt : ""}: ${src ? src : ""}`
       break
     case "LABEL":
-      title = `Clicked label: ${clickedElement.textContent}`
+      title = `Click label: ${clickedElement.textContent}`
+      break
+    case "SPAN":
+      title = `Click ${clickedElement.textContent}`
       break
     default:
-      title = `Clicked ${clickedElement.tagName.toLowerCase()}: ${
+      title = `Click ${
         clickedElement.textContent
-      }`
+      }: ${clickedElement.tagName.toLowerCase()}`
+      description = `Click on ${clickedElement.tagName.toLowerCase()} tag: ${
+        clickedElement.textContent
+      } 
+        ${metaDescription}`
       break
   }
 
