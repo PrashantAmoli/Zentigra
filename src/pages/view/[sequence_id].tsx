@@ -20,9 +20,6 @@ import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 
-import introJs from "intro.js"
-import { Steps } from "intro.js-react"
-
 import {
   Dialog,
   DialogClose,
@@ -65,40 +62,12 @@ export const StepsPage = () => {
     return sortedStepsData
   }
 
-  const deleteSequence = async () => {
-    const confirmDeletion = window.confirm(
-      "Are you sure you want to delete this sequence?"
-    )
-    if (!confirmDeletion) return
-
-    // delete all steps from sequence
-    const { error: stepsError } = await supabase
-      .from("steps")
-      .delete()
-      .eq("sequence_id", sequence_id)
-
-    if (stepsError) console.log(stepsError)
-    else toast.success("Steps deleted")
-
-    const { error } = await supabase
-      .from("sequences")
-      .delete()
-      .eq("id", sequence_id)
-
-    if (error) console.log(error)
-    else toast.success("Sequence deleted")
-
-    setTimeout(() => router.push("/"), 3000)
-  }
-
   useEffect(() => {
     toast.promise(fetchStepsFromSequenceId(), {
       loading: "Loading steps...",
       success: "Steps loaded",
       error: "Failed to load steps"
     })
-
-    console.log("swiper", Swiper)
   }, [sequence_id])
 
   return (
@@ -142,27 +111,11 @@ export const StepsPage = () => {
           <div className="flex justify-end gap-2">
             <Button
               onClick={() => {
-                let originalUrl = window?.location?.href
-                // Create a new URL object from the original URL
-                const url = new URL(originalUrl)
-
-                // Extract the pathname and append '/view/' before the last segment
-                const segments = url.pathname.split("/")
-                const lastSegment = segments.pop() // Remove the last segment
-                const newPathname = `${segments.join("/")}/view/${lastSegment}`
-
-                // Construct the new URL
-                const newUrl = `${url.protocol}//${url.host}${newPathname}`
-
-                navigator.clipboard.writeText(newUrl)
+                navigator.clipboard.writeText(window?.location?.href)
                 toast.success(`Link copied to clipboard`)
               }}
               variant="outline">
               Share
-            </Button>
-
-            <Button onClick={() => deleteSequence()} variant="destructive">
-              Delete
             </Button>
           </div>
         </div>
@@ -235,8 +188,6 @@ export const StepsPage = () => {
                               </svg>
                             </Button>
                           </Link>
-
-                          <EditDialog step={step} />
                         </div>
                       ) : (
                         <></>
