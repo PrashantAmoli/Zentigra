@@ -18,7 +18,19 @@ import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 
+import { CiEdit } from "react-icons/ci"
 import { Tooltip } from "react-tooltip"
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "~components/ui/dialog"
 
 type SequenceType = {
   x: number
@@ -189,7 +201,7 @@ export default function PreviewPage() {
                     // centeredSlidesBounds={true}
                     onSlideChange={() => console.log("slide change")}
                     // onSwiper={setThumbsSwiper}
-                    className="flex flex-col max-w-4xl p-4 mx-auto border shadow-inner rounded-xl mySwiper gap-9">
+                    className="flex flex-col max-w-4xl p-4 mx-auto border-none shadow-none rounded-xl mySwiper gap-9">
                     {sequencePreview.map((step: any, key: number) => {
                       return (
                         <SwiperSlide key={key} id={step.title} className="">
@@ -210,26 +222,34 @@ export default function PreviewPage() {
                               </div>
 
                               {step?.page_url ? (
-                                <Link href={step?.page_url}>
-                                  <Button
-                                    className="w-full max-w-xs truncate"
-                                    size="icon"
-                                    variant="link">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      className="w-6 h-6"
-                                      stroke="currentColor">
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                                      />
-                                    </svg>
-                                  </Button>
-                                </Link>
+                                <div className="flex flex-col items-center justify-between gap-2">
+                                  <Link href={step?.page_url}>
+                                    <Button
+                                      className="w-full max-w-xs truncate"
+                                      size="icon"
+                                      variant="link">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        className="w-6 h-6"
+                                        stroke="currentColor">
+                                        <path
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                        />
+                                      </svg>
+                                    </Button>
+                                  </Link>
+
+                                  <EditDialog
+                                    step={step}
+                                    sequencePreview={sequencePreview}
+                                    setSequencePreview={setSequencePreview}
+                                  />
+                                </div>
                               ) : (
                                 <></>
                               )}
@@ -395,7 +415,7 @@ export function ClickHighlight({ step }) {
       <a
         onClick={() => swiper.slideNext()}
         id={`anchor-${step.position}`}
-        className="absolute z-20 w-8 h-8 duration-1000 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-2xl cursor-pointer hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-300/95 bg-green-400/20 animate-pulse hover:animate-none hover:scale-105"
+        className="absolute z-20 w-8 h-8 duration-1000 -translate-x-5 -translate-y-5 border-4 border-double rounded-full shadow-md cursor-pointer hover:border-2 hover:border-dashed sm:w-12 sm:h-12 border-yellow-300/95 bg-green-400/20 animate-pulse hover:animate-none hover:scale-105"
         style={{
           top: `${step.y * 100}%`,
           left: `${step.x * 100}%`
@@ -419,6 +439,80 @@ export function ClickHighlight({ step }) {
           </p>
         </div>
       </Tooltip>
+    </>
+  )
+}
+
+export const EditDialog = ({ step, sequencePreview, setSequencePreview }) => {
+  const [title, setTitle] = useState(step.title)
+  const [description, setDescription] = useState(step.description)
+
+  const editStepWithId = async () => {
+    console.log("Step: ", step)
+
+    const updatedSequence = sequencePreview.map((item) => {
+      if (item.x === step.x && item.y === step.y) {
+        console.log("Updating step: ", item)
+        return {
+          ...item,
+          title,
+          description
+        }
+      }
+
+      return item
+    })
+
+    setSequencePreview(updatedSequence)
+  }
+
+  return (
+    <>
+      <Dialog>
+        <DialogTrigger>
+          <CiEdit className="w-6 h-6" />
+        </DialogTrigger>
+
+        <DialogContent className="w-11/12 max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="px-2">Edit Step</DialogTitle>
+
+            <DialogDescription className="flex flex-col gap-5 px-2 py-5">
+              <Textarea
+                placeholder="Edit title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className=""
+              />
+
+              <Textarea
+                placeholder="Edit description..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className=""
+                rows={12}
+              />
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex justify-between w-full gap-2 px-2">
+            <DialogClose className="w-full">
+              <Button className="w-full" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+
+            <DialogClose>
+              <Button
+                className="w-full"
+                variant="default"
+                onClick={() => editStepWithId()}>
+                Save
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
